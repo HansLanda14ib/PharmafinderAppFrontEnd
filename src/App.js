@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Header, Footer } from "./Components/Layout";
+import CityList from "./Components/CityList";
+import CityForm from "./Components/CityForm";
+import ZoneList from "./Components/ZoneList";
+import ZoneForm from "./Components/ZoneForm";
+import ZoneByCity from "./Components/ZoneByCity";
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <Router>
+            <Header />
+            <div className="main-wrapper">
+                <Routes>
+                    <Route path="/" element={<CityList />} />
+                    <Route path="/create-city" element={<CityForm />} />
+                    <Route path="/zone" element={<ZoneList/>} />
+                    <Route path="/create-zone" element={<ZoneForm />} />
+                    <Route path="/zoneByCity" element={<ZoneByCity />} />
+                </Routes>
+            </div>
+            <Footer />
+        </Router>
+    );
 }
 
 export default App;
