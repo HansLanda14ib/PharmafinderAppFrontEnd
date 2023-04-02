@@ -12,7 +12,7 @@ function Header() {
             </NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link" to="/" activeClassName="active">
+            <NavLink className="nav-link" to="/city" activeClassName="active">
               City
             </NavLink>
           </li>

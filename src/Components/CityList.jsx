@@ -9,7 +9,7 @@ const CityList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-        const result = await axios.get("http://localhost:8080/api/cities");
+        const result = await axios.get("/api/cities");
         setCities(result.data);
        
     };
@@ -19,7 +19,7 @@ const CityList = () => {
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this city?")) {
-      axios.delete(`http://localhost:8080/api/cities/${id}`).then(() => {
+      axios.delete(`/api/cities/${id}`).then(() => {
         setCities(cities.filter((city) => city.id !== id));
       });
     }
@@ -28,10 +28,10 @@ const CityList = () => {
   const handleEdit = (id) => {
     const newName = window.prompt("Enter the new name for this city:");
     if (newName) {
-      axios.put(`http://localhost:8080/api/cities/${id}`, {name:newName }).then(() => {
+      axios.put(`/api/cities/${id}`, {nom:newName }).then(() => {
         setCities(cities.map((city) => {
           if (city.id === id) {
-            return { ...city, name: newName };
+            return { ...city, nom: newName };
           }
           return city;
         }));

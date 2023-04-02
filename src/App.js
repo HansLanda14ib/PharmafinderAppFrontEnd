@@ -5,7 +5,7 @@ import CityForm from "./Components/CityForm";
 import ZoneList from "./Components/ZoneList";
 import ZoneForm from "./Components/ZoneForm";
 import ZoneByCity from "./Components/ZoneByCity";
-
+import PharmacyList from "./Components/PharmacyList";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -14,11 +14,12 @@ function App() {
             <Header />
             <div className="main-wrapper">
                 <Routes>
-                    <Route path="/" element={<CityList />} />
+                    <Route path="/city" element={<CityList />} />
                     <Route path="/create-city" element={<CityForm />} />
                     <Route path="/zone" element={<ZoneList/>} />
                     <Route path="/create-zone" element={<ZoneForm />} />
                     <Route path="/zoneByCity" element={<ZoneByCity />} />
+                    <Route path="/pharmacie" element={<PharmacyList />} />
                 </Routes>
             </div>
             <Footer />
