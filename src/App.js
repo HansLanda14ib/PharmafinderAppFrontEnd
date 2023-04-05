@@ -12,6 +12,7 @@ import {ToastContainer} from 'react-toastify';
 import React from "react";
 import Menu from "./Components/Menu";
 import './App.css'
+import Home from "./Components/Home";
 
 function App() {
     return (
@@ -20,7 +21,8 @@ function App() {
                 <Menu />
                 <div className="content-container">
                     <Routes>
-                        <Route exact path="/home" element={<PharmacyList/>}/>
+                        <Route exact path="/" element={<Home/>}/>
+                        <Route exact path="/home" element={<Home/>}/>
                         <Route path="/pharmacies" element={<PharmacyList/>}/>
                         <Route path="/add-pharmacy" element={<PharmacyForm/>}/>
                         <Route path="/cities" element={<CityList/>}/>

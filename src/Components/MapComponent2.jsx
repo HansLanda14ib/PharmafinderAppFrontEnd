@@ -1,14 +1,13 @@
-import {MapContainer, Marker, Popup, TileLayer, useMapEvent} from "react-leaflet";
+import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
 import "leaflet/dist/leaflet.css"
 import "../App.css";
 import {Icon} from "leaflet/src/layer/marker";
 import MarkerClusterGroup from "react-leaflet-cluster";
-import L from "leaflet";
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 
 const MapComponent = () => {
-    const [coords, setCoords] = useState([]);
+   // const [coords, setCoords] = useState([]);
     const position = [31.611530277838078, -8.047648552164675];
     const [currentLocation, setCurrentLocation] = useState(null);
     const [markers, setMarkers] = useState([]);
@@ -56,8 +55,8 @@ const MapComponent = () => {
     const MyPopup = ({ pharmacy }) => {
         return (
             <Popup>
-                <h3>{pharmacy.nom}</h3>
-                <p>{pharmacy.adresse}</p>
+                <h3>{pharmacy.name}</h3>
+                <p>{pharmacy.address}</p>
 
             </Popup>
         );
@@ -66,7 +65,9 @@ const MapComponent = () => {
     // eslint-disable-next-line no-undef
     const map = React.useRef(null);
     return (
-        <div  className=" h-100 d-flex justify-content-center align-items-center">
+        <div className="home-container">
+            <h1>Welcome to Pharma Finder</h1>
+            <p>Find pharmacies near you, anytime.</p>
             <MapContainer style={{ height: "600px", width: "1400px" }} center={position} zoom={8} scrollWheelZoom={true} ref={map}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

@@ -32,8 +32,7 @@ export default function PharmacyList({zoneId}) {
     const [editmodalIsOpen, setEditmodalIsOpen] = useState(false);
     const [deletedPharmacy, setDeletedPharmacy] = useState(null);
     const [editpharmacy, setEditpharmacy] = useState(null);
-    const [altitude, setAltitude] = useState("");
-    const [longitude, setLongitude] = useState("");
+
     const [currentLocation, setCurrentLocation] = useState(null);
 
     const pharmacyStates = {

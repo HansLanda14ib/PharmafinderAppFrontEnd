@@ -71,7 +71,7 @@ const PharmacyForm = () => {
             if (response.status === 200 || response.status === 204) {
 
                 toast.success("Pharmacy added successfully");
-                navigate("/pharmacie");
+                navigate("/pharmacies");
             }
             console.log(response.data);
 

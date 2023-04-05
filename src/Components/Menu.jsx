@@ -7,7 +7,7 @@ import '../styles/LeftNav.css';
 
 
 const Menu = () => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(true);
 
     const toggleNav = () => {
         setIsOpen(!isOpen);
@@ -38,8 +38,8 @@ const Menu = () => {
 
                         </Link>
                     </li>
-                    <li>
-                        <Link to="/map" onClick={toggleNav}>
+                    <li> {/* onClick={toggleNav} */}
+                        <Link to="/map" >
                             <FontAwesomeIcon icon={faMoon} />
                             <span>PharmaMap</span>
                         </Link>
@@ -68,7 +68,7 @@ const Menu = () => {
 
             </nav>
             <footer className="footer">
-                <p>&copy; 2023 Pharma Finder</p>
+                <p>&copy; 2023 Pharma Finder By HansLanda14ib</p>
             </footer>
         </>
     );
