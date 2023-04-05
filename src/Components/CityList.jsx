@@ -28,10 +28,10 @@ const CityList = () => {
   const handleEdit = (id) => {
     const newName = window.prompt("Enter the new name for this city:");
     if (newName) {
-      axios.put(`/api/cities/${id}`, {nom:newName }).then(() => {
+      axios.put(`/api/cities/${id}`, {name:newName }).then(() => {
         setCities(cities.map((city) => {
           if (city.id === id) {
-            return { ...city, nom: newName };
+            return { ...city, name: newName };
           }
           return city;
         }));
@@ -42,8 +42,8 @@ const CityList = () => {
   return (
     <div>
       <h2>City List</h2>
-      <Link to="/create-city" className="btn btn-primary">
-        Create City
+      <Link to="/add-city" className="btn btn-primary">
+        Add City
       </Link>
       <table className="table">
         <thead>
@@ -57,7 +57,7 @@ const CityList = () => {
           {cities.map((city) => (
             <tr key={city.id}>
               <td>{city.id}</td>
-              <td>{city.nom}</td>
+              <td>{city.name}</td>
               <td>
                 <button className="btn btn-danger" onClick={() => handleDelete(city.id)}>
                   Delete

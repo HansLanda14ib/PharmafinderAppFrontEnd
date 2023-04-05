@@ -28,9 +28,10 @@ function ConfirmationModal({ isOpen, onRequestClose, onConfirm, onCancel, messag
                     left: "50%",
                     transform: "translate(-50%, -50%)",
                     width: "fit-content",
-                    maxWidth: "80%",
+                    height: "200px", // Set the height to 400 pixels
+                    maxWidth: "20%",
                     padding: "20px",
-                    borderRadius: "4px",
+                    borderRadius: "14px",
                     boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
                 },
             }}

@@ -1,28 +1,49 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Header, Footer } from "./Components/Layout";
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+
 import CityList from "./Components/CityList";
 import CityForm from "./Components/CityForm";
 import ZoneList from "./Components/ZoneList";
 import ZoneForm from "./Components/ZoneForm";
-import ZoneByCity from "./Components/ZoneByCity";
 import PharmacyList from "./Components/PharmacyList";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import PharmacyForm from "./Components/PharmacyForm";
+import MapComponent from "./Components/MapComponent2";
+import {ToastContainer} from 'react-toastify';
+import React from "react";
+import Menu from "./Components/Menu";
+import './App.css'
 
 function App() {
     return (
         <Router>
-            <Header />
-            <div className="main-wrapper">
-                <Routes>
-                    <Route path="/city" element={<CityList />} />
-                    <Route path="/create-city" element={<CityForm />} />
-                    <Route path="/zone" element={<ZoneList/>} />
-                    <Route path="/create-zone" element={<ZoneForm />} />
-                    <Route path="/zoneByCity" element={<ZoneByCity />} />
-                    <Route path="/pharmacie" element={<PharmacyList />} />
-                </Routes>
+            <div className="app-container">
+                <Menu />
+                <div className="content-container">
+                    <Routes>
+                        <Route exact path="/home" element={<PharmacyList/>}/>
+                        <Route path="/pharmacies" element={<PharmacyList/>}/>
+                        <Route path="/add-pharmacy" element={<PharmacyForm/>}/>
+                        <Route path="/cities" element={<CityList/>}/>
+                        <Route path="/add-city" element={<CityForm/>}/>
+                        <Route path="/zones" element={<ZoneList/>}/>
+                        <Route path="/add-zone" element={<ZoneForm/>}/>
+                        <Route path="/map" element={<MapComponent/>}/>
+
+                    </Routes>
+                </div>
             </div>
-            <Footer />
+            <ToastContainer
+                position="top-center"
+                autoClose={1400}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+            />
         </Router>
     );
 }

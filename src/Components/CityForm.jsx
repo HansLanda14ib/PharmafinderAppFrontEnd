@@ -3,19 +3,19 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const CityForm = () => {
-  const [nom, setnom] = useState("");
+  const [name, setName] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    axios.post("http://localhost:8080/api/cities/save", { nom }).then(() => {
+    axios.post("/api/cities/save", { name }).then(() => {
       navigate("/");
     });
   };
 
   return (
     <div>
-      <h2>Create City</h2>
+      <h2>Add City</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="name">Name:</label>
@@ -23,12 +23,12 @@ const CityForm = () => {
             type="text"
             className="form-control"
             id="name"
-            value={nom}
-            onChange={(event) => setnom(event.target.value)}
+            value={name}
+            onChange={(event) => setName(event.target.value)}
           />
         </div>
         <button type="submit" className="btn btn-primary">
-          Create
+          Add
         </button>
       </form>
     </div>

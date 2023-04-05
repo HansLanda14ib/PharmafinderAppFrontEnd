@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import Modal from "react-modal";
 import {ToastContainer, toast} from 'react-toastify';
 import ConfirmationModal from "./ConfirmationModel";
+import "../styles/custom-modal.css";
 
 export default function ZoneList({cityId}) {
     const [zones, setZones] = useState([]);
@@ -67,15 +68,33 @@ export default function ZoneList({cityId}) {
     };
 
     const handleSave = async () => {
-        console.log('selectedZone before API request', selectedZone); // add this line to check the value of selectedZone before making the API request
         const data = new URLSearchParams();
-        data.append('nom', selectedZone.nom);
-        data.append('ville_Id', selectedZone.ville.id);
+        data.append('name', selectedZone.name);
+        data.append('cityId', selectedZone.city.id);
+
         try {
             const response = await axios.put(`/api/zones/${selectedZone.id}?${data}`);
-            console.log('API response', response); // add this line to check the response from the API
+
+            if (response.status === 200 || response.status === 204) {
+                // Update the state with the updated data received from the API
+                setZones(zones.map((zone) => {
+                    if (zone.id === selectedZone.id) {
+                        return {
+                            ...zone,
+                            name: selectedZone.name,
+                            city: selectedZone.city,
+                        };
+                    }
+                    return zone;
+                }));
+
+                toast.info("Zone has been updated");
+                setModalIsOpen(false);
+            } else {
+                toast.error("Failed to update zone");
+            }
         } catch (error) {
-            console.log('API error', error); // add this line to check the error returned by the API
+            toast.error("Failed to update zone");
         }
     };
 
@@ -85,7 +104,7 @@ export default function ZoneList({cityId}) {
         <div>
 
             <h2>Zones</h2>
-            <Link to={`/create-zone`} className="btn btn-primary">
+            <Link to={`/add-zone`} className="btn btn-primary">
                 Add Zone
             </Link>
             <table className="table">
@@ -100,8 +119,8 @@ export default function ZoneList({cityId}) {
                 <tbody>
                 {zones.map((zone) => (<tr key={zone.id}>
                     <td>{zone.id}</td>
-                    <td>{zone.nom}</td>
-                    <td>{zone.ville && zone.ville.nom}</td>
+                    <td>{zone.name}</td>
+                    <td>{zone.city && zone.city.name}</td>
                     <td>
                         <button className="btn btn-danger" onClick={() => deleteOpenModal(zone.id)}>
                             Delete
@@ -113,30 +132,35 @@ export default function ZoneList({cityId}) {
                 </tr>))}
                 </tbody>
             </table>
-            <Modal isOpen={modalIsOpen} onRequestClose={handleCloseModal}>
+            <Modal isOpen={modalIsOpen} onRequestClose={handleCloseModal} className="custom-modal">
                 <h3>Modification de la zone</h3>
                 <ul>
                     <li>
-                        <label>Nom de la zone:</label>
-                        <input type="text" value={selectedZone && selectedZone.nom}
-                               onChange={(e) => setSelectedZone({...selectedZone, nom: e.target.value})}/>
+                        <label>Name</label>
+                        <input type="text" value={selectedZone && selectedZone.name}
+                               onChange={(e) => setSelectedZone({...selectedZone, name: e.target.value})}/>
                     </li>
                     <li>
-                        <label>Ville:</label>
-                        <select value={selectedZone && selectedZone.ville && selectedZone.ville.id}
-                                onChange={(e) => setSelectedZone({...selectedZone, ville: {id: e.target.value}})}>
+                        <label>City</label>
+                        <select value={selectedZone && selectedZone.city && selectedZone.city.id}
+                                onChange={(e) => setSelectedZone({...selectedZone, city: {id: e.target.value}})}>
                             {cities.map((city) => (<option key={city.id} value={city.id}>
-                                {city.nom}
+                                {city.name}
                             </option>))}
                         </select>
                     </li>
                 </ul>
-                <button className="btn btn-primary" onClick={handleCloseModal}>
-                    Abort
-                </button>
-                <button className="btn btn-success" onClick={handleSave}>
-                    Save
-                </button>
+                <ul>
+
+                        <button onClick={handleCloseModal}>
+                            Abort
+                        </button>
+
+                        <button onClick={handleSave}>
+                            Save
+                        </button>
+
+                </ul>
             </Modal>
 
             <ToastContainer

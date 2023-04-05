@@ -23,7 +23,7 @@ const ZoneForm = ({onZoneAdded}) => {
             return;
         }
 
-        const data = new URLSearchParams(`nom=${name}&ville_id=${cityId}`);
+        const data = new URLSearchParams(`name=${name}&cityId=${cityId}`);
 
         try {
             const response = await axios.post(`/api/zones/save?${data}`);
@@ -62,7 +62,7 @@ const ZoneForm = ({onZoneAdded}) => {
                 >
                     <option value="">Select a city</option>
                     {cities && cities.map((city) => (<option key={city.id} value={city.id}>
-                            {city.nom}
+                            {city.name}
                         </option>))}
                 </select>
             </div>

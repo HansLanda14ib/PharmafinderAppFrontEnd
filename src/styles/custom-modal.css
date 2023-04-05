@@ -1,0 +1,137 @@
+.custom-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    max-width: 100%;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-modal .ReactModal__Overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.custom-modal h3 {
+    margin-top: 0;
+}
+
+.custom-modal ul {
+
+    padding: 0;
+    list-style: none;
+    margin: 20px 2px 5px;
+}
+
+.custom-modal li {
+    margin-bottom: 10px;
+}
+
+.custom-modal label {
+    display: inline-block;
+    width: 100px;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.custom-modal input,
+.custom-modal select {
+    width: 200px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.custom-modal button {
+
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: none;
+    color: #fff;
+    background-color: #007bff;
+    cursor: pointer;
+    margin: 10px 5px 20px;
+}
+
+.custom-modal button:hover {
+    background-color: #0069d9;
+}
+
+.custom-modal button.btn-primary {
+    background-color: #007bff;
+}
+
+.custom-modal button.btn-primary:hover {
+    background-color: #0069d9;
+}
+
+.custom-modal button.btn-secondary {
+    background-color: #6c757d;
+}
+
+.custom-modal button.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.custom-modal2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    max-width: 100%;
+    background-color: #fff;
+    border-radius: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-modal2 .ReactModal__Overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.pharmacies-container {
+    padding: 100px 20px 20px ;
+    min-height: 100vh;
+}
+
+.pharmacies-container h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.pharmacies-container table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.pharmacies-container th,
+.pharmacies-container td {
+    border: 1px solid #246d7d;
+    padding: 10px;
+    text-align: left;
+}
+
+
+.pharmacies-container .add-pharmacy {
+    margin-top: 20px;
+    background-color: #246d7d;
+    color: #a1dce7;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.pharmacies-container .add-pharmacy:hover {
+    background-color: #a1dce7;
+    color: #246d7d;
+}
