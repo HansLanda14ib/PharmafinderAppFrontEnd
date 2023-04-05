@@ -1,7 +1,10 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
 import 'react-toastify/dist/ReactToastify.css'
-import { ToastContainer, toast } from 'react-toastify';
+
+import Notiflix from 'notiflix';
+
+
 
 const ZoneForm = ({onZoneAdded}) => {
     const [name, setName] = useState("");
@@ -19,7 +22,8 @@ const ZoneForm = ({onZoneAdded}) => {
         event.preventDefault();
 
         if (!name || !cityId) {
-            toast.error("Name and city are required");
+            Notiflix.Notify.warning("Name and city are required");
+
             return;
         }
 
@@ -31,12 +35,14 @@ const ZoneForm = ({onZoneAdded}) => {
             if (response.status === 200 || response.status === 201) {
                 setName("");
                 setCityId("");
-                toast.success("Zone added successfully");
+                Notiflix.Notify.success('Zone added successfully');
+
             } else {
-                toast.error("Failed to add zone");
+                Notiflix.Notify.failure('Failed to add zone');
+
             }
         } catch (error) {
-            toast.error("Failed to add zone");
+            Notiflix.Notify.failure('Failed to add zone');
         }
     };
 
@@ -69,7 +75,7 @@ const ZoneForm = ({onZoneAdded}) => {
             <button type="submit" className="btn btn-primary">
                 Add Zone
             </button>
-        <ToastContainer
+        {/* <ToastContainer
             position="top-center"
             autoClose={1500}
             hideProgressBar={false}
@@ -80,7 +86,7 @@ const ZoneForm = ({onZoneAdded}) => {
             draggable
             pauseOnHover
             theme="dark"
-        />
+        /> */}
         </form>);
 };
 

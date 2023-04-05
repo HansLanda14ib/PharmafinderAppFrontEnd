@@ -6,6 +6,7 @@ import logo from '../images/pharmafinderLogo.png';
 import '../styles/LeftNav.css';
 
 
+
 const Menu = () => {
     const [isOpen, setIsOpen] = useState(true);
 
@@ -40,13 +41,14 @@ const Menu = () => {
                     </li>
                     <li> {/* onClick={toggleNav} */}
                         <Link to="/map" >
-                            <FontAwesomeIcon icon={faMoon} />
+                            <FontAwesomeIcon icon={faMap} />
                             <span>PharmaMap</span>
                         </Link>
                     </li>
                     <li>
                         <Link to="/" >
-                            <FontAwesomeIcon icon={faMap} />
+
+                            <FontAwesomeIcon icon={faMoon} />
                             <span>24/24 Pharmacies</span>
                         </Link>
                     </li>

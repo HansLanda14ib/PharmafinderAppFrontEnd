@@ -2,10 +2,9 @@ import React, {useState, useEffect} from "react";
 import axios from "axios";
 import {Link} from "react-router-dom";
 import Modal from "react-modal";
-import {ToastContainer, toast} from 'react-toastify';
 import ConfirmationModal from "./ConfirmationModel";
 import "../styles/custom-modal.css";
-
+import Notiflix from 'notiflix';
 export default function ZoneList({cityId}) {
     const [zones, setZones] = useState([]);
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -43,12 +42,15 @@ export default function ZoneList({cityId}) {
 
             if (response.status === 200 || response.status === 204) {
                 setZones(zones.filter((zone) => zone.id !== zoneIdToDelete));
-                toast.success("Zone deleted successfully");
+                Notiflix.Notify.success('Zone deleted successfully');
+
             } else {
-                toast.error("Failed to delete zone");
+                Notiflix.Notify.warning('Failed to delete zone');
+
             }
         } catch (error) {
-            toast.error("Failed to delete zone");
+            Notiflix.Notify.failure('Failed to delete zone');
+
         }
 
         // Close the modal and reset the zoneIdToDelete state
@@ -87,14 +89,15 @@ export default function ZoneList({cityId}) {
                     }
                     return zone;
                 }));
+                Notiflix.Notify.info('Zone has been updated');
 
-                toast.info("Zone has been updated");
                 setModalIsOpen(false);
             } else {
-                toast.error("Failed to update zone");
+                Notiflix.Notify.failure("Failed to update zone");
+
             }
         } catch (error) {
-            toast.error("Failed to update zone");
+            Notiflix.Notify.failure("Failed to update zone");
         }
     };
 
@@ -163,7 +166,7 @@ export default function ZoneList({cityId}) {
                 </ul>
             </Modal>
 
-            <ToastContainer
+            {/* <ToastContainer
                 position="top-center"
                 autoClose={1500}
                 hideProgressBar={false}
@@ -173,7 +176,7 @@ export default function ZoneList({cityId}) {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                theme="dark"/>
+                theme="dark"/> */}
             <ConfirmationModal
                 isOpen={isModalOpen2}
                 onRequestClose={() => setIsModalOpen2(false)}

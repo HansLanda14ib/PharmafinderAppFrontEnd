@@ -6,12 +6,12 @@ import ConfirmationModal from "./ConfirmationModel";
 import "../styles/custom-modal.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus  } from '@fortawesome/free-solid-svg-icons';
+import Notiflix from 'notiflix';
 
-import {toast} from 'react-toastify';
 import MapComponent from "./MapComponent";
 
 
-const toastOptions = {
+/* const toastOptions = {
     position: "top-right",
     autoClose: 2500,
     hideProgressBar: false,
@@ -20,7 +20,7 @@ const toastOptions = {
     draggable: true,
     progress: undefined,
     theme: "dark",
-};
+}; */
 
 export default function PharmacyList({zoneId}) {
     const [pharmacies, setPharmacies] = useState([]);
@@ -81,12 +81,13 @@ export default function PharmacyList({zoneId}) {
             if (status === 200 || status === 201) {
                 const updatedPharmacy = {...selectedPharmacy, state: 1};
                 setPharmacies(prevPharmacies => prevPharmacies.map(pharmacy => pharmacy.id === updatedPharmacy.id ? updatedPharmacy : pharmacy));
-                toast.info('Pharmacy accepted successfully', {...toastOptions});
+                Notiflix.Notify.info('Pharmacy accepted successfully');
+
             } else {
-                toast.error("Failed to accept pharmacy");
+                Notiflix.Notify.failure('Action failed');
             }
         } catch (error) {
-            toast.error("Failed to accept pharmacy");
+            Notiflix.Notify.failure('Action failed');
         } finally {
             handleCloseModal();
         }
@@ -99,22 +100,13 @@ export default function PharmacyList({zoneId}) {
                 // Update the state with the new values
                 const updatedPharmacy = {...selectedPharmacy, state: 2};
                 setPharmacies(prevPharmacies => prevPharmacies.map(pharmacy => pharmacy.id === updatedPharmacy.id ? updatedPharmacy : pharmacy));
+                Notiflix.Notify.info('Pharmacy refused successfully');
 
-                toast.info('Pharmacy refused successfully', {
-                    position: "top-right",
-                    autoClose: 2500,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                });
             } else {
-                toast.error("Failed to refuse pharmacy");
+                Notiflix.Notify.failure("Action failed");
             }
         } catch (error) {
-            toast.error("Failed to refuse pharmacy");
+            Notiflix.Notify.failure("Action failed");
         }
         handleCloseModal();
     };
@@ -140,12 +132,12 @@ export default function PharmacyList({zoneId}) {
 
             if (response.status === 200 || response.status === 204) {
                 setPharmacies(pharmacies.filter((pharmacy) => pharmacy.id !== deletedPharmacy));
-                toast.success("Pharmacy deleted successfully");
+                Notiflix.Notify.failure("Pharmacy deleted successfully");
             } else {
-                toast.error("Failed to delete Pharmacy");
+                Notiflix.Notify.failure("Failed to delete Pharmacy");
             }
         } catch (error) {
-            toast.error("Failed to delete Pharmacy");
+            Notiflix.Notify.failure("Failed to delete Pharmacy");
         }
 
         // Close the modal and reset the zoneIdToDelete state
@@ -177,12 +169,12 @@ export default function PharmacyList({zoneId}) {
                 setPharmacies(updatedPharmacies);
 
                 setEditmodalIsOpen(false);
-                toast.info("Pharmacy has been updated");
+                Notiflix.Notify.info("Pharmacy has been updated");
             } else {
-                toast.error("Failed to update Pharmacy");
+                Notiflix.Notify.failure("Failed to update Pharmacy");
             }
         } catch (error) {
-            toast.error("Failed to update Pharmacy");
+            Notiflix.Notify.failure("Failed to update Pharmacy");
         }
     }, [editpharmacy, pharmacies]);
 

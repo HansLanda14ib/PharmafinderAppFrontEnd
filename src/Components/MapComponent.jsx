@@ -1,10 +1,10 @@
-import {MapContainer, Marker, Popup, TileLayer, useMapEvent} from "react-leaflet";
+import {MapContainer, Popup, TileLayer, useMapEvent} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "../App.css";
 import {Icon} from "leaflet/src/layer/marker";
 import L from "leaflet";
 
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef} from "react";
 
 
 const MapComponent = ({onSelect,center  }) => {
