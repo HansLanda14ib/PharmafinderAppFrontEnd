@@ -46,20 +46,20 @@
         transform: rotate(360deg);
     }
 }
-
+/*
 .modal-content {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 30%; /* Set the width of the modal */
-    max-width: 400px; /* Set a maximum width for the modal */
+    width: 30%; /* Set the width of the modal
+    max-width: 400px; /* Set a maximum width for the modal
     background: white;
     padding: 20px;
     border-radius: 4px;
     outline: none;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+}  */
 
 * {
     box-sizing: border-box;

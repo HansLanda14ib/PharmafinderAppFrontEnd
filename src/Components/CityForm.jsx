@@ -9,7 +9,7 @@ const CityForm = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     axios.post("/api/cities/save", { name }).then(() => {
-      navigate("/");
+      navigate(-1);
     });
   };
 

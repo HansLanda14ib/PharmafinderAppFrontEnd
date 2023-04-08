@@ -6,7 +6,6 @@ import ZoneList from "./Components/ZoneList";
 import ZoneForm from "./Components/ZoneForm";
 import PharmacyList from "./Components/PharmacyList";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import PharmacyForm from "./Components/PharmacyForm";
 import MapComponent from "./Components/MapComponent2";
 
 import React from "react";
@@ -16,6 +15,9 @@ import Home from "./Components/Home";
 
 import Notiflix from "notiflix";
 import ErrorPage from "./Components/error-page";
+import MyNav from "./Components/test";
+import FormCreate from "./Components/FormCreate";
+import MapComponent2 from "./Components/MapComponent2";
 
 Notiflix.Notify.init({
     position: 'center-top', // Notification position
@@ -35,15 +37,18 @@ function App() {
                 <div className="content-container">
                     <Routes>
                         <Route exact path="/" element={<Home/>}/>
+
                         <Route exact path="/home" element={<Home/>}/>
                         <Route path="/pharmacies" element={<PharmacyList/>}/>
-                        <Route path="/add-pharmacy" element={<PharmacyForm/>}/>
+                        <Route path="/add-pharmacy" element={<FormCreate/>}/>
                         <Route path="/cities" element={<CityList/>}/>
                         <Route path="/add-city" element={<CityForm/>}/>
                         <Route path="/zones" element={<ZoneList/>}/>
                         <Route path="/add-zone" element={<ZoneForm/>}/>
                         <Route path="/map" element={<MapComponent/>}/>
                         <Route path='*' element={<ErrorPage/>} />
+                        <Route path='/test' element={<MyNav/>} />
+
                     </Routes>
                 </div>
             </div>

@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
-import 'react-toastify/dist/ReactToastify.css'
 
 import Notiflix from 'notiflix';
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -10,7 +10,7 @@ const ZoneForm = ({onZoneAdded}) => {
     const [name, setName] = useState("");
     const [cityId, setCityId] = useState("");
     const [cities, setCities] = useState([]);
-
+    let navigate = useNavigate();
 
     useEffect(() => {
         axios.get("/api/cities").then((response) => {
@@ -36,6 +36,7 @@ const ZoneForm = ({onZoneAdded}) => {
                 setName("");
                 setCityId("");
                 Notiflix.Notify.success('Zone added successfully');
+                navigate(-1);
 
             } else {
                 Notiflix.Notify.failure('Failed to add zone');

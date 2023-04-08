@@ -1,341 +1,201 @@
-import React, {useState, useEffect, useCallback} from "react";
+import React, {useState, useEffect} from "react";
 import axios from "axios";
 import {Link} from "react-router-dom";
-import Modal from "react-modal";
-import ConfirmationModal from "./ConfirmationModel";
+import Modal from 'react-bootstrap/Modal';
 import "../styles/custom-modal.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus  } from '@fortawesome/free-solid-svg-icons';
 import Notiflix from 'notiflix';
-
-import MapComponent from "./MapComponent";
-
-
-/* const toastOptions = {
-    position: "top-right",
-    autoClose: 2500,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "dark",
-}; */
+import {Confirm} from 'notiflix/build/notiflix-confirm-aio';
+import FormCreate from "./FormCreate";
+import UpdateForm from "./UpdateForm";
+import {DropdownButton} from "react-bootstrap";
+import Dropdown from 'react-bootstrap/Dropdown';
+import Map from "./Map";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faTrash} from "@fortawesome/free-solid-svg-icons";
 
 export default function PharmacyList({zoneId}) {
     const [pharmacies, setPharmacies] = useState([]);
     const [selectedPharmacy, setSelectedPharmacy] = useState(null);
-    const [showDiv, setShowDiv] = useState(false);
+    const [editedPharmacy, setEditedPharmacy] = useState(null);
     const [zones, setZones] = useState([]);
-    const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [deletemodalIsOpen, setDeletemodalIsOpen] = useState(false);
-    const [editmodalIsOpen, setEditmodalIsOpen] = useState(false);
-    const [deletedPharmacy, setDeletedPharmacy] = useState(null);
-    const [editpharmacy, setEditpharmacy] = useState(null);
-
+    const [mapModalIsOpen, setMapModalIsOpen] = useState(false);
     const [currentLocation, setCurrentLocation] = useState(null);
-
-    const pharmacyStates = {
-        0: "WAITING", 1: "ACCEPTED", 2: "REJECTED",
-    };
-
+    const pharmacyStates = {0: "WAITING", 1: "ACCEPTED", 2: "REJECTED",};
+    const [alt, setAlt] = useState('');
+    const [long, setLong] = useState('');
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((position) => {
             const {latitude, longitude} = position.coords;
             setCurrentLocation([latitude, longitude]);
         }, (error) => {
-            console.error(error);
+
         });
         const fetchPharmacies = async () => {
             const result = await axios.get("/api/pharmacies");
             setPharmacies(result.data);
-            console.log(result.data);
+
         }
         fetchPharmacies();
 
         const fetchZones = async () => {
             const result = await axios.get("/api/zones");
             setZones(result.data);
-            console.log(result.data);
+
         }
         fetchZones();
 
     }, []);
 
-    const handleOpenModal = (pharmacy) => {
-        console.log('Opening modal');
-        setSelectedPharmacy(pharmacy);
-        setModalIsOpen(true);
-    };
+    const handleDelete = async (pharmacyId) => {
 
+        Confirm.show(
+            'Delete Confirm',
+            'Are you you want to delete?',
+            'Delete',
+            'Abort',
+            async () => {
+                try {
+                    const response = await axios.delete(`/api/pharmacies/deletePharmacy/id=${pharmacyId}`);
 
-    const handleCloseModal = () => {
-        console.log('Closing modal');
-        setSelectedPharmacy(null);
-        setModalIsOpen(false);
-    };
-
-    const acceptPharmacy = async () => {
-        try {
-            const {status} = await axios.put(`api/pharmacies/acceptPharmacy/id=${selectedPharmacy.id}`);
-            if (status === 200 || status === 201) {
-                const updatedPharmacy = {...selectedPharmacy, state: 1};
-                setPharmacies(prevPharmacies => prevPharmacies.map(pharmacy => pharmacy.id === updatedPharmacy.id ? updatedPharmacy : pharmacy));
-                Notiflix.Notify.info('Pharmacy accepted successfully');
-
-            } else {
-                Notiflix.Notify.failure('Action failed');
-            }
-        } catch (error) {
-            Notiflix.Notify.failure('Action failed');
-        } finally {
-            handleCloseModal();
-        }
-    };
-
-    const refusePharmacy = async () => {
-        try {
-            const response = await axios.put(`api/pharmacies/refusePharmacy/id=${selectedPharmacy.id}`);
-            if (response.status === 200 || response.status === 201) {
-                // Update the state with the new values
-                const updatedPharmacy = {...selectedPharmacy, state: 2};
-                setPharmacies(prevPharmacies => prevPharmacies.map(pharmacy => pharmacy.id === updatedPharmacy.id ? updatedPharmacy : pharmacy));
-                Notiflix.Notify.info('Pharmacy refused successfully');
-
-            } else {
-                Notiflix.Notify.failure("Action failed");
-            }
-        } catch (error) {
-            Notiflix.Notify.failure("Action failed");
-        }
-        handleCloseModal();
-    };
-
-    const deleteOpenModal = (pharmacyId) => {
-        setDeletedPharmacy(pharmacyId);
-
-        setDeletemodalIsOpen(true);
-    };
-
-    const editOpenModal = (pharmacy) => {
-        setEditpharmacy(pharmacy);
-        setEditmodalIsOpen(true);
-    };
-    const editCloseModal = () => {
-        setEditpharmacy(null);
-        setEditmodalIsOpen(false);
-    };
-
-    const handleDelete = useCallback(async () => {
-        try {
-            const response = await axios.delete(`/api/pharmacies/deletePharmacy/id=${deletedPharmacy}`);
-
-            if (response.status === 200 || response.status === 204) {
-                setPharmacies(pharmacies.filter((pharmacy) => pharmacy.id !== deletedPharmacy));
-                Notiflix.Notify.failure("Pharmacy deleted successfully");
-            } else {
-                Notiflix.Notify.failure("Failed to delete Pharmacy");
-            }
-        } catch (error) {
-            Notiflix.Notify.failure("Failed to delete Pharmacy");
-        }
-
-        // Close the modal and reset the zoneIdToDelete state
-        setDeletemodalIsOpen(false);
-        setDeletedPharmacy(null);
-    }, [deletedPharmacy, pharmacies]);
-
-
-    const handleUpdate = useCallback(async () => {
-        try {
-            const response = await axios.put(`/api/pharmacies/updatePharmacy/id=${editpharmacy.id}`, editpharmacy);
-
-            if (response.status === 200 || response.status === 204) {
-                const updatedPharmacies = pharmacies.map((pharmacy) => {
-                    if (pharmacy.id === editpharmacy.id) {
-                        return {
-                            ...pharmacy,
-                            name: editpharmacy.name,
-                            address: editpharmacy.address,
-                            zone: {id: editpharmacy.zone.id},
-                            altitude: editpharmacy.altitude,
-                            longitude: editpharmacy.longitude,
-                            state: editpharmacy.state,
-                        };
+                    if (response.status === 200 || response.status === 204) {
+                        setPharmacies(pharmacies.filter((pharmacy) => pharmacy.id !== pharmacyId));
+                        Notiflix.Notify.failure("Pharmacy deleted successfully");
+                    } else {
+                        Notiflix.Notify.failure("Failed to delete Pharmacy");
                     }
-                    return pharmacy;
-                });
+                } catch (error) {
+                    Notiflix.Notify.failure("Failed to delete Pharmacy");
+                }
 
-                setPharmacies(updatedPharmacies);
+            },
+            () => {
+                console.log('If you say so...');
+            },
+            {},
+        );
+    };
 
-                setEditmodalIsOpen(false);
-                Notiflix.Notify.info("Pharmacy has been updated");
-            } else {
-                Notiflix.Notify.failure("Failed to update Pharmacy");
-            }
-        } catch (error) {
-            Notiflix.Notify.failure("Failed to update Pharmacy");
+
+    const handleAddPharmacy = (newPharmacy) => {
+        // add new pharmacy to list of pharmacies
+        setPharmacies([...pharmacies, newPharmacy]);
+    };
+    const [showModal, setShowModal] = useState(false);
+
+    const handleEdit = (pharmacy) => {
+        setEditedPharmacy(pharmacy);
+        setShowModal(true);
+    };
+
+    const updatePharmacy = (updatedPharmacy) => {
+        const updatedPharmacies = pharmacies.map((pharmacy) => pharmacy.id === updatedPharmacy.id ? updatedPharmacy : pharmacy)
+        setPharmacies(updatedPharmacies);
+    };
+    const onHideModal = () => {
+        setShowModal(false);
+        setEditedPharmacy(null);
+    };
+
+    const showMap = (lal, long, pharmacy) => {
+        setMapModalIsOpen(true);
+        if (lal && long) {
+            setAlt(lal);
+            setLong(long);
+            setSelectedPharmacy(pharmacy);
         }
-    }, [editpharmacy, pharmacies]);
-
-
-    const handleClick = () => {
-        setShowDiv(true);
     };
-    const handleCoordsSelected = (coords) => {
 
-        setEditpharmacy({...editpharmacy, altitude: coords[0], longitude: coords[1]});
-
-
-    };
-    return (
-        <div className="pharmacies-container">
-                <h1>Pharmacies</h1>
-                <Link to={`/add-pharmacy`} className="btn btn-primary">
-                    <FontAwesomeIcon icon={faPlus} />
-                   <span>Add Pharmacy</span>
-                </Link>
-                <Link to={`/map`} className="btn btn-info">
-                    Pharmacies on Map
-                </Link>
-                <table className="table">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Address</th>
-                        <th>Altitude</th>
-                        <th>Longitude</th>
-                        <th>State</th>
-                        <th>Zone</th>
-
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {pharmacies.map((pharmacy) => (<tr key={pharmacy.id}>
-                        <td>{pharmacy.id}</td>
-                        <td>{pharmacy.name}</td>
-                        <td>{pharmacy.address}</td>
-                        <td>{pharmacy.altitude}</td>
-                        <td>{pharmacy.longitude}</td>
-                        <td>
-                            <button
-                                className={pharmacy.state === 0 ? "btn btn-warning" : pharmacy.state === 1 ? "btn btn-success" : pharmacy.state === 2 ? "btn btn-danger" : "inherit"}
-                                onClick={() => handleOpenModal(pharmacy)}>
-                                {pharmacyStates[pharmacy.state]}</button>
-                        </td>
-
-                        <td>{pharmacy.zone && pharmacy.zone.name}
-                        </td>
-
-                        <td>
-                            <button className="btn btn-danger" onClick={() => deleteOpenModal(pharmacy.id)}>
-                                Delete
-                            </button>
-                            <button className="btn btn-primary" onClick={() => editOpenModal(pharmacy)}>
-                                Edit
-                            </button>
-                        </td>
-                    </tr>))}
-                    </tbody>
-                </table>
-                <Modal isOpen={modalIsOpen} onRequestClose={handleCloseModal} className="custom-modal2">
-
-                    {/*  <button className="btn btn-success" onClick={acceptPharmacy}>
-                    Accept
-                </button>
-                <button className="btn btn-danger" onClick={refusePharmacy}>
-                    Refuse
-                </button>
-                <button className="btn btn-secondary" onClick={handleCloseModal}>
-                    Abort
-                </button> */}
-                    {selectedPharmacy && selectedPharmacy.state === 0 && (<>
-                        <button
-                            className="btn btn-success"
-                            onClick={() => handleOpenModal(acceptPharmacy)}
-                        >
-                            Accept
+    const handleChangeState = (pharmacyId, newState) => {
+        // Find the pharmacy in the list by its ID
+        const pharmacyToUpdate = pharmacies.find(pharmacy => pharmacy.id === pharmacyId);
+        console.log(pharmacyToUpdate);
+        // Update the state of the pharmacy
+        pharmacyToUpdate.state = newState;
+        const response = axios.put(`/api/pharmacies/${pharmacyId}/state`, newState, {
+            headers: {'Content-Type': 'application/json'}
+        }).then(response => {
+            Notiflix.Notify.success("state has changed successfully ");
+            setPharmacies(prevPharmacies => prevPharmacies.map(pharmacy => pharmacy.id === pharmacyToUpdate.id ? pharmacyToUpdate : pharmacy));
+        });
+    }
+    return (<div className="pharmacies-container">
+            <h1>Pharmacies</h1>
+            <FormCreate currentLocation={currentLocation} onAddPharmacy={handleAddPharmacy}/>
+            {editedPharmacy && (<UpdateForm
+                showModal={showModal}
+                onHide={onHideModal}
+                pharmacy={editedPharmacy}
+                updatePharmacy={updatePharmacy}
+                currentLocation={currentLocation}
+            />)}
+            <Link to={`/map`} className="btn btn-info">
+                Pharmacies on Map
+            </Link>
+            <table className="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Altitude</th>
+                    <th>Longitude</th>
+                    <th>Show on map</th>
+                    <th>State</th>
+                    <th>Zone</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {pharmacies.map((pharmacy) => (<tr key={pharmacy.id}>
+                    <td>{pharmacy.id}</td>
+                    <td>{pharmacy.name}</td>
+                    <td>{pharmacy.address}</td>
+                    <td>{pharmacy.altitude}</td>
+                    <td>{pharmacy.longitude}</td>
+                    <td>
+                        <button onClick={() => showMap(pharmacy.altitude, pharmacy.longitude, pharmacy)}>show map
                         </button>
-                        <button
-                            className="btn btn-danger"
-                            onClick={() => handleOpenModal(refusePharmacy)}
-                        >
-                            Refuse
-                        </button>
-                    </>)}
+                    </td>
+                    <td>
+                        <div className="d-flex align-items-center">
+                        <span
+                            className={`badge ${pharmacy.state === 0 ? "bg-warning" : pharmacy.state === 1 ? "bg-success" : pharmacy.state === 2 ? "bg-danger" : "inherit"}`}>
+                        {pharmacyStates[pharmacy.state]}
+                     </span>
+                            <DropdownButton id="state-dropdown" variant="outline-secondary" title="" size='sm'>
+                                <Dropdown.Item onClick={() => handleChangeState(pharmacy.id, 0)}>Waiting</Dropdown.Item>
+                                <Dropdown.Item onClick={() => handleChangeState(pharmacy.id, 1)}>Accept</Dropdown.Item>
+                                <Dropdown.Item onClick={() => handleChangeState(pharmacy.id, 2)}>Refuse</Dropdown.Item>
+                            </DropdownButton>
+                        </div>
+                    </td>
+                    <td>{pharmacy.zone && pharmacy.zone.name}
+                    </td>
+                    <td>
+                        <FontAwesomeIcon icon={faTrash} className="text-danger cursor"
+                                         onClick={() => handleDelete(pharmacy.id)}/>
+                        <button className="btn btn-secondary" onClick={() => handleEdit(pharmacy)}>Edit</button>
+                    </td>
+                </tr>))}
+                </tbody>
+            </table>
+            <Modal show={mapModalIsOpen} onHide={() => {
+                setMapModalIsOpen(false)
+            }}
+                   size='xl'
+                   aria-labelledby="contained-modal-title-vcenter"
+                   centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Pharmacy on Map</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Map center={[alt, long]} selectedPharmacy={selectedPharmacy}/>
+                </Modal.Body>
 
-                    {selectedPharmacy && (selectedPharmacy.state === 1 || selectedPharmacy.state === 2) && (<button
-                        className={selectedPharmacy.state === 2 ? "btn btn-success" : selectedPharmacy.state === 1 ? "btn btn-danger" : ""}
-                        onClick={() => {
-                            if (selectedPharmacy.state === 1) {
-                                handleOpenModal(refusePharmacy);
-                            } else if (selectedPharmacy.state === 2) {
-                                handleOpenModal(acceptPharmacy);
-                            }
-                        }}
-                    >
 
-                        {selectedPharmacy.state === 1 ? "Refuse" : selectedPharmacy.state === 2 ? "Accept" : ""}
-                    </button>)}
+            </Modal>
 
-                </Modal>
-
-                <Modal isOpen={editmodalIsOpen} onRequestClose={editCloseModal} className="custom-modal">
-                    <h3>Update your pharmacy info:</h3>
-                    <ul>
-                        <li>
-                            <label>Nom</label>
-                            <input type="text" value={editpharmacy && editpharmacy.name}
-                                   onChange={(e) => setEditpharmacy({...editpharmacy, name: e.target.value})}/>
-                        </li>
-
-                        <li>
-                            <label>Address</label>
-                            <input type="text" value={editpharmacy && editpharmacy.address}
-                                   onChange={(e) => setEditpharmacy({...editpharmacy, address: e.target.value})}/>
-                        </li>
-                        <li>
-                            <label>Zone</label>
-                            <select value={editpharmacy && editpharmacy.zone && editpharmacy.zone.id}
-                                    onChange={(e) => setEditpharmacy({...editpharmacy, zone: {id: e.target.value}})}>
-                                {zones.map((zone) => (<option key={zone.id} value={zone.id}>
-                                    {zone.name}
-                                </option>))}
-                            </select>
-                        </li>
-                        <li>
-                            <label htmlFor="laltitude">Latitude:</label>
-                            <input type="number" id="laltitude" name="laltitude"
-                                   value={editpharmacy && editpharmacy.altitude} disabled required/>
-                        </li>
-                        <li>
-                            <label htmlFor="longitude">Latitude:</label>
-                            <input type="number" id="longitude" name="longitude"
-                                   value={editpharmacy && editpharmacy.longitude} disabled required/>
-                        </li>
-                        <li>
-                            <button onClick={handleClick}>Get my position</button>
-                            {showDiv &&
-                                <div><MapComponent onSelect={handleCoordsSelected} center={currentLocation}/></div>}
-                        </li>
-                        <li>
-                            <button onClick={handleUpdate}>Update Pharmacy</button>
-
-                        </li>
-                    </ul>
-
-                </Modal>
-                <ConfirmationModal
-                    isOpen={deletemodalIsOpen}
-                    onRequestClose={() => setDeletemodalIsOpen(false)}
-                    onConfirm={handleDelete}
-                    onCancel={() => setDeletemodalIsOpen(false)}
-                    message="Are you sure you want to delete this pharmacy?"
-                />
-
-            </div>
+        </div>
 
     )
 
