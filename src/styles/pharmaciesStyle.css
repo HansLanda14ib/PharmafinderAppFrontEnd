@@ -1,0 +1,40 @@
+.pharmacies-container {
+    padding: 50px 20px 20px ;
+    min-height: 100vh;
+
+}
+
+.pharmacies-container h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.pharmacies-container table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.pharmacies-container th,
+.pharmacies-container td {
+
+    padding: 10px;
+    text-align: left;
+}
+
+
+.pharmacies-container .add-pharmacy {
+    margin-top: 20px;
+    background-color: #246d7d;
+    color: #a1dce7;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.pharmacies-container .add-pharmacy:hover {
+    background-color: #a1dce7;
+    color: #246d7d;
+}

@@ -1,13 +1,13 @@
 import {MapContainer, Popup, TileLayer, useMapEvent} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import "../App.css";
+import "../../App.css";
 import {Icon} from "leaflet/src/layer/marker";
 import L from "leaflet";
 
 import React, {useState, useRef} from "react";
 
 
-const MapComponent = ({onSelect,center  }) => {
+const MapComponent = ({onSelect, center}) => {
     const [selectedMarker, setSelectedMarker] = useState(null);
     const [coords, setCoords] = useState([40.76550117255093, -73.98777271008677]);
 
@@ -39,23 +39,23 @@ const MapComponent = ({onSelect,center  }) => {
     const map = useRef(null);
 
 
-
     return (
 
+        <>
 
+            <MapContainer style={{height: "400px", width: "780px"}} center={center || coords} zoom={11}
+                          scrollWheelZoom={true} ref={map}>
+                <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                {selectedMarker && (
+                    <Popup position={selectedMarker.getLatLng()}>my pharmacy</Popup>
+                )}
+                <MapClickHandler handleMapClick={handleMapClick}/>
+            </MapContainer>
 
-        <MapContainer style={{ height: "400px", width: "780px" }} center={center || coords } zoom={11} scrollWheelZoom={true} ref={map}>
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {selectedMarker && (
-                <Popup position={selectedMarker.getLatLng()}>my pharmacy</Popup>
-            )}
-            <MapClickHandler handleMapClick={handleMapClick}/>
-        </MapContainer>
-
-
+        </>
 
     );
 };

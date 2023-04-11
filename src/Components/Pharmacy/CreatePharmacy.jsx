@@ -5,9 +5,10 @@ import Modal from 'react-bootstrap/Modal';
 import {FormControl, FormGroup} from "react-bootstrap";
 import axios from "axios";
 import Notiflix from "notiflix";
-import MapComponent from "./MapComponent";
+import MapComponent from "../Map/MapComponent";
 
-function FormCreate(props) {
+
+function CreatePharmacy(props) {
     const [showModalCreate, setShowModalCreate] = useState(false);
     const [showMap, setShowMap] = useState(false);
 
@@ -85,7 +86,8 @@ console.log(pharmacy);
     const handleCloseModalCreate = () => setShowModalCreate(false);
     const handleShowModalCreate = () => setShowModalCreate(true);
 
-    return (<>
+    return (
+    <>
         <Button variant="primary" onClick={handleShowModalCreate}>
             Add Pharmacy
         </Button>
@@ -161,4 +163,4 @@ console.log(pharmacy);
     </>);
 }
 
-export default FormCreate;
+export default CreatePharmacy;

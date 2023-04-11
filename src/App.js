@@ -1,23 +1,22 @@
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
-
-import CityList from "./Components/CityList";
-import CityForm from "./Components/CityForm";
-import ZoneList from "./Components/ZoneList";
-import ZoneForm from "./Components/ZoneForm";
-import PharmacyList from "./Components/PharmacyList";
+import CityList from "./Components/City/CityList";
+import CityForm from "./Components/City/CityForm";
+import ZoneList from "./Components/Zone/ZoneList";
+import ZoneForm from "./Components/Zone/ZoneForm";
+import ListPharmacies from "./Components/Pharmacy/ListPharmacies";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import MapComponent from "./Components/MapComponent2";
-
+import MapComponent from "./Components/Map/PharmaciesOnMap";
 import React from "react";
-import Menu from "./Components/Menu";
 import './App.css'
-import Home from "./Components/Home";
-
+import Home from "./Components/Layout/Home";
 import Notiflix from "notiflix";
 import ErrorPage from "./Components/error-page";
-import MyNav from "./Components/test";
-import FormCreate from "./Components/FormCreate";
-import MapComponent2 from "./Components/MapComponent2";
+import CreatePharmacy from "./Components/Pharmacy/CreatePharmacy";
+import OndutyAvailable from "./Components/Pharmacy/OndutyAvailable";
+import OndutyHistory from "./Components/Pharmacy/OndutyHistory";
+import AboutPage from "./Components/Layout/Aboutpage";
+import Layout from "./Components/Layout/Layout";
+
 
 Notiflix.Notify.init({
     position: 'center-top', // Notification position
@@ -31,40 +30,38 @@ Notiflix.Notify.init({
 
 function App() {
     return (
+        <Layout>
         <Router>
             <div className="app-container">
-                <Menu/>
+
                 <div className="content-container">
                     <Routes>
                         <Route exact path="/" element={<Home/>}/>
-
                         <Route exact path="/home" element={<Home/>}/>
-                        <Route path="/pharmacies" element={<PharmacyList/>}/>
-                        <Route path="/add-pharmacy" element={<FormCreate/>}/>
+
                         <Route path="/cities" element={<CityList/>}/>
                         <Route path="/add-city" element={<CityForm/>}/>
+
                         <Route path="/zones" element={<ZoneList/>}/>
                         <Route path="/add-zone" element={<ZoneForm/>}/>
+                        <Route path="/zones/zone/:zoneId/pharmacies" element={<ListPharmacies />}/>
+
+                        <Route path="/pharmacies" element={<ListPharmacies/>}/>
+                        <Route path="/add-pharmacy" element={<CreatePharmacy/>}/>
+
+                        <Route path="/ondutypharmacies/history" element={<OndutyHistory/>}/>
+                        <Route path="/ondutypharmacies/available" element={<OndutyAvailable/>}/>
+                        <Route path="/ondutypharmacies/available/now" element={<OndutyAvailable/>}/>
                         <Route path="/map" element={<MapComponent/>}/>
                         <Route path='*' element={<ErrorPage/>} />
-                        <Route path='/test' element={<MyNav/>} />
+                        <Route path='/about' element={<AboutPage/>} />
 
                     </Routes>
                 </div>
             </div>
-            {/*<ToastContainer
-                position="top-center"
-                autoClose={1400}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="dark"
-            /> */}
+
         </Router>
+            </Layout>
     );
 }
 

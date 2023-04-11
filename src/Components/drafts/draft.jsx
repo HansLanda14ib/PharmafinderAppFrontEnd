@@ -1,5 +1,5 @@
 import Modal from "react-modal";
-import MapComponent from "./MapComponent";
+import MapComponent from "../Map/MapComponent";
 import React, {useCallback, useState} from "react";
 import axios from "axios";
 import Notiflix from "notiflix";

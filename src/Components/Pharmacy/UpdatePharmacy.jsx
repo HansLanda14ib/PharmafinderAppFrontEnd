@@ -1,22 +1,24 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Modal, Button, Form, FormGroup, FormControl} from 'react-bootstrap';
 import axios from "axios";
-import MapComponent from "./MapComponent";
+import MapComponent from "../Map/MapComponent";
 import Notiflix from "notiflix";
 
-const UpdateForm = ({currentLocation,showModal, onHide, pharmacy, updatePharmacy}) => {
+const UpdatePharmacy = ({currentLocation, showModal, onHide, pharmacy, updatePharmacy}) => {
     const [updatedPharmacy, setUpdatedPharmacy] = React.useState(pharmacy);
+    // eslint-disable-next-line no-unused-vars
     const [id, setId] = useState(updatedPharmacy?.id);
+    // eslint-disable-next-line no-unused-vars
     const [state, setState] = useState(updatedPharmacy?.id);
     const [name, setName] = useState(updatedPharmacy?.name);
     const [address, setAddress] = useState(updatedPharmacy?.address);
     const [altitude, setAltitude] = useState(updatedPharmacy?.altitude);
     const [longitude, setLongitude] = useState(updatedPharmacy?.longitude);
     const [zoneId, setZoneId] = useState(updatedPharmacy?.zone.id);
+    // eslint-disable-next-line no-unused-vars
     const [zoneName, setZoneName] = useState(updatedPharmacy?.zone.name);
     const [showMap, setShowMap] = useState(false);
     const [zones, setZones] = useState([]);
-    const [cities, setCities] = useState([]);
 
     useEffect(() => {
         setUpdatedPharmacy(pharmacy);
@@ -31,27 +33,30 @@ const UpdateForm = ({currentLocation,showModal, onHide, pharmacy, updatePharmacy
         fetchZones();
     }, []);
 
-    const handleSubmit =async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const pharmacy = {
-            id : id, state:state,
+            id: id, state: state,
             name: name, address: address, altitude: altitude, longitude: longitude, zone: {
-                id: zoneId, name:zoneName
+                id: zoneId, name: zoneName
             }
         };
 
         setUpdatedPharmacy(pharmacy);
         try {
-            console.log(pharmacy)
+
+            // eslint-disable-next-line no-unused-vars
             const response = await axios.put(`/api/pharmacies/${updatedPharmacy.id}/update`, pharmacy);
             updatePharmacy(pharmacy);
+            Notiflix.Notify.success("Pharmacy has been updated");
+            onHide();
 
-        }catch (error){
-            console.log(error);
+        } catch (error) {
+            console.log(error.response.data);
             Notiflix.Notify.failure("Failed to update Pharmacy");
         }
-        onHide();
+
     };
     const handleShowMapChange = (e) => {
         setShowMap(e.target.checked);
@@ -97,11 +102,8 @@ const UpdateForm = ({currentLocation,showModal, onHide, pharmacy, updatePharmacy
                             {zones && zones.map((zone) => (<option key={zone.id} value={zone.id}>
                                 {zone.name}
                             </option>))}
-
                         </Form.Select>
-
                     </Form.Group>
-
                     <Form.Check type="checkbox" label="Show Map" checked={showMap} onChange={handleShowMapChange}/>
 
                 </Form>
@@ -118,5 +120,4 @@ const UpdateForm = ({currentLocation,showModal, onHide, pharmacy, updatePharmacy
         </Modal>
     );
 };
-
-export default UpdateForm;
+export default UpdatePharmacy;

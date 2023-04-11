@@ -1,10 +1,13 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import Modal from "react-modal";
-import ConfirmationModal from "./ConfirmationModel";
-import "../styles/custom-modal.css";
+import ConfirmationModal from "../ConfirmationModel";
+import "../../styles/editZone-modal.css";
 import Notiflix from 'notiflix';
+import {Icon} from "leaflet/src/layer/marker";
+
+
 export default function ZoneList({cityId}) {
     const [zones, setZones] = useState([]);
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -12,7 +15,7 @@ export default function ZoneList({cityId}) {
     const [cities, setCities] = useState([]);
     const [isModalOpen2, setIsModalOpen2] = useState(false);
     const [zoneIdToDelete, setZoneIdToDelete] = useState(null);
-
+    let navigate = useNavigate();
     useEffect(() => {
 
         const fetchZones = async () => {
@@ -101,10 +104,17 @@ export default function ZoneList({cityId}) {
         }
     };
 
+    const openPharmacies = (zone_id) => {
+        navigate(`/zones/zone/${zone_id}/pharmacies`);
 
+    };
+    const customIcon = new Icon({
+        iconUrl: "https://cdn-icons-png.flaticon.com/512/1527/1527531.png",
+        iconSize: [38, 38],
+    });
     return (
 
-        <div>
+        <>
 
             <h2>Zones</h2>
             <Link to={`/add-zone`} className="btn btn-primary">
@@ -116,6 +126,7 @@ export default function ZoneList({cityId}) {
                     <th>ID</th>
                     <th>Name</th>
                     <th>City</th>
+                    <th>Pharmacies</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -124,6 +135,12 @@ export default function ZoneList({cityId}) {
                     <td>{zone.id}</td>
                     <td>{zone.name}</td>
                     <td>{zone.city && zone.city.name}</td>
+                    <td>
+                        <img width={customIcon.options.iconSize[0]} height={customIcon.options.iconSize[1]}
+                             src={customIcon.options.iconUrl} alt="Location Icon"
+                             onClick={() => openPharmacies(zone.id)}
+                        />
+                    </td>
                     <td>
                         <button className="btn btn-danger" onClick={() => deleteOpenModal(zone.id)}>
                             Delete
@@ -135,7 +152,7 @@ export default function ZoneList({cityId}) {
                 </tr>))}
                 </tbody>
             </table>
-            <Modal isOpen={modalIsOpen} onRequestClose={handleCloseModal} className="custom-modal">
+            <Modal isOpen={modalIsOpen} onRequestClose={handleCloseModal} className="editZone-modal">
                 <h3>Modification de la zone</h3>
                 <ul>
                     <li>
@@ -155,28 +172,17 @@ export default function ZoneList({cityId}) {
                 </ul>
                 <ul>
 
-                        <button onClick={handleCloseModal}>
-                            Abort
-                        </button>
+                    <button onClick={handleCloseModal}>
+                        Abort
+                    </button>
 
-                        <button onClick={handleSave}>
-                            Save
-                        </button>
+                    <button onClick={handleSave}>
+                        Save
+                    </button>
 
                 </ul>
             </Modal>
 
-            {/* <ToastContainer
-                position="top-center"
-                autoClose={1500}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="dark"/> */}
             <ConfirmationModal
                 isOpen={isModalOpen2}
                 onRequestClose={() => setIsModalOpen2(false)}
@@ -184,7 +190,8 @@ export default function ZoneList({cityId}) {
                 onCancel={() => setIsModalOpen2(false)}
                 message="Are you sure you want to delete this item?"
             />
-        </div>);
+        </>
+    );
 };
 
 

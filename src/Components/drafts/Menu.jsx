@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faLaptopMedical, faMap, faMoon,faCity,faNetworkWired   } from '@fortawesome/free-solid-svg-icons';
-import logo from '../images/pharmafinderLogo.png';
-import '../styles/LeftNav.css';
+import logo from '../../images/pharmafinderLogo.png';
+import '../../styles/LeftNav.css';
 
 
 
@@ -16,7 +16,6 @@ const Menu = () => {
 
     return (
         <>
-
             <button className={`nav-toggle ${isOpen ? 'open' : ''}`} onClick={toggleNav}>
                 <div className="hamburger"></div>
             </button>
@@ -46,10 +45,10 @@ const Menu = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/" >
+                        <Link to="/ondutypharmacies/available" >
 
                             <FontAwesomeIcon icon={faMoon} />
-                            <span>24/24 Pharmacies</span>
+                            <span>On-duty Pharmacies</span>
                         </Link>
                     </li>
                     <li>

@@ -5,7 +5,6 @@ import Notiflix from 'notiflix';
 import {useNavigate} from "react-router-dom";
 
 
-
 const ZoneForm = ({onZoneAdded}) => {
     const [name, setName] = useState("");
     const [cityId, setCityId] = useState("");
@@ -49,33 +48,33 @@ const ZoneForm = ({onZoneAdded}) => {
 
 
     return (<form onSubmit={handleSubmit}>
-            <div className="form-group">
-                <label htmlFor="name">Name:</label>
-                <input
-                    type="text"
-                    className="form-control"
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
-            </div>
-            <div className="form-group">
-                <label htmlFor="cityId">City:</label>
-                <select
-                    className="form-control"
-                    id="cityId"
-                    value={cityId}
-                    onChange={(e) => setCityId(e.target.value)}
-                >
-                    <option value="">Select a city</option>
-                    {cities && cities.map((city) => (<option key={city.id} value={city.id}>
-                            {city.name}
-                        </option>))}
-                </select>
-            </div>
-            <button type="submit" className="btn btn-primary">
-                Add Zone
-            </button>
+        <div className="form-group">
+            <label htmlFor="name">Name:</label>
+            <input
+                type="text"
+                className="form-control"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+            />
+        </div>
+        <div className="form-group">
+            <label htmlFor="cityId">City:</label>
+            <select
+                className="form-control"
+                id="cityId"
+                value={cityId}
+                onChange={(e) => setCityId(e.target.value)}
+            >
+                <option value="">Select a city</option>
+                {cities && cities.map((city) => (<option key={city.id} value={city.id}>
+                    {city.name}
+                </option>))}
+            </select>
+        </div>
+        <button type="submit" className="btn btn-primary">
+            Add Zone
+        </button>
         {/* <ToastContainer
             position="top-center"
             autoClose={1500}
@@ -88,7 +87,7 @@ const ZoneForm = ({onZoneAdded}) => {
             pauseOnHover
             theme="dark"
         /> */}
-        </form>);
+    </form>);
 };
 
 export default ZoneForm;
