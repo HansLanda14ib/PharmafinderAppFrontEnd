@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
 import axios from "axios";
+import authHeader from "../../Services/auth-header";
+
 
 
 const CityList = () => {
@@ -9,7 +11,7 @@ const CityList = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const result = await axios.get("/api/cities");
+            const result = await axios.get("http://localhost:8080/api/v1/cities",{ headers: authHeader() });
             setCities(result.data);
 
         };
@@ -19,7 +21,7 @@ const CityList = () => {
 
     const handleDelete = (id) => {
         if (window.confirm("Are you sure you want to delete this city?")) {
-            axios.delete(`/api/cities/${id}`).then(() => {
+            axios.delete(`http://localhost:8080/api/v1/cities/${id}`,{headers: authHeader() }).then(() => {
                 setCities(cities.filter((city) => city.id !== id));
             });
         }
@@ -28,7 +30,7 @@ const CityList = () => {
     const handleEdit = (id) => {
         const newName = window.prompt("Enter the new name for this city:");
         if (newName) {
-            axios.put(`/api/cities/${id}`, {name: newName}).then(() => {
+            axios.put(`http://localhost:8080/api/v1/cities/${id}`, {name: newName},{ headers: authHeader() }).then(() => {
                 setCities(cities.map((city) => {
                     if (city.id === id) {
                         return {...city, name: newName};
@@ -40,7 +42,7 @@ const CityList = () => {
     };
 
     return (
-        <>
+        <div className="pharmacies-container">
             <h2>City List</h2>
             <Link to="/add-city" className="btn btn-primary">
                 Add City
@@ -71,7 +73,7 @@ const CityList = () => {
                 </tbody>
             </table>
 
-        </>
+        </div>
     );
 };
 

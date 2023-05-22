@@ -1,6 +1,7 @@
 .pharmacies-container {
     padding: 50px 20px 20px ;
     min-height: 100vh;
+    color: white;
 
 }
 
@@ -8,6 +9,7 @@
     font-size: 36px;
     margin-bottom: 20px;
     text-align: center;
+    color: white;
 }
 
 .pharmacies-container table {
@@ -17,7 +19,7 @@
 
 .pharmacies-container th,
 .pharmacies-container td {
-
+    color: white;
     padding: 10px;
     text-align: left;
 }

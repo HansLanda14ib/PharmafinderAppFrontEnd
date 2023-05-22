@@ -1,10 +1,10 @@
 import Navigation from './Navigation'
 import Footer from './Footer'
 
-const Layout = ({ children }) => {
+const Layout = ({ children, currentUser }) => {
     return (
         <>
-            <Navigation />
+            <Navigation currentUser ={currentUser }/>
             <main>{children}</main>
             <Footer />
         </>

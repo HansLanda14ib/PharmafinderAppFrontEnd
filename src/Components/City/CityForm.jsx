@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
-
+import authHeader from "../../Services/auth-header";
 
 const CityForm = () => {
     const [name, setName] = useState("");
@@ -9,7 +9,10 @@ const CityForm = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        axios.post("/api/cities/save", {name}).then(() => {
+        const city = {name: name}
+        console.log(city);
+        axios.post("http://localhost:8080/api/v1/cities/save",city, {headers: authHeader()})
+            .then(() => {
             navigate(-1);
         });
     };

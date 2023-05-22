@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import authHeader from "../../Services/auth-header";
 
 const ZoneByCity = () => {
   const [zones, setZones] = useState([]);
@@ -7,7 +8,7 @@ const ZoneByCity = () => {
   const [selectedCityId, setSelectedCityId] = useState("");
 
   useEffect(() => {
-    axios.get("/api/cities").then((response) => {
+    axios.get("http://localhost:8080/api/v1/cities",{ headers: authHeader() }).then((response) => {
       setCities(response.data);
     });
   }, []);
@@ -15,14 +16,21 @@ const ZoneByCity = () => {
   const handleCityChange = (event) => {
     const cityId = event.target.value;
     setSelectedCityId(cityId);
-    axios.get(`/api/zones/city/${cityId}`).then((response) => {
-      setZones(response.data);
+    if(cityId !==0){
+      axios.get(`http://localhost:8080/api/v1/zones/zone/city=${cityId}`,{ headers: authHeader() }).then((response) => {
+        setZones(response.data);
+      });
+    }
+    else{
+      axios.get(`http://localhost:8080/api/v1/zones`,{ headers: authHeader() }).then((response) => {
+        setZones(response.data);
     });
+    }
   };
 
   return (
-    <div>
-      <h2>Zone par ville</h2>
+    <div className="pharmacies-container">
+      <h2>Zones by City</h2>
       <div className="form-group">
         <label htmlFor="cityId">Select a city:</label>
         <select
@@ -31,10 +39,10 @@ const ZoneByCity = () => {
           value={selectedCityId}
           onChange={handleCityChange}
         >
-          <option value="">All cities</option>
+          <option value="0">All cities</option>
           {cities.map((city) => (
             <option key={city.id} value={city.id}>
-              {city.name}
+              {city?.name}
             </option>
           ))}
         </select>
@@ -42,15 +50,15 @@ const ZoneByCity = () => {
       <table className="table">
         <thead>
           <tr>
+            <th>Id</th>
             <th>Name</th>
-            <th>City</th>
           </tr>
         </thead>
         <tbody>
           {zones.map((zone) => (
             <tr key={zone.id}>
-              <td>{zone.name}</td>
-              <td>{zone.city.name}</td>
+              <td>{zone?.id}</td>
+              <td>{zone?.name}</td>
             </tr>
           ))}
         </tbody>

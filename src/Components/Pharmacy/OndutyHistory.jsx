@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import axios from "axios";
 import "../../styles/editZone-modal.css";
 import {Form} from "react-bootstrap";
+import authHeader from "../../Services/auth-header";
 
 export default function OndutyHistory() {
     const [pharmacies, setPharmacies] = useState([]);
@@ -14,13 +15,32 @@ export default function OndutyHistory() {
     useEffect(() => {
         const fetchPharmacies = async () => {
 
-               const result = await axios.get("/api/pharmacies/garde/all");
-            setPharmacies(result.data);
+               const result = await axios.get("http://localhost:8080/api/v1/pharmaciesgarde/all",{ headers: authHeader() })
+            console.log(result.data);
+            // Filter pharmacies based on the date criteria
+            const currentDate = new Date(); // Get the current date
+            const currentDay = currentDate.getDay(); // Get the current day of the week (0 = Sunday, 1 = Monday, etc.)
+            const startDate = new Date(currentDate); // Copy the current date
+            const endDate = new Date(currentDate); // Copy the current date
+            startDate.setDate(startDate.getDate() - currentDay); // Set the start date to the previous Sunday
+            endDate.setDate(endDate.getDate() - currentDay + 6); // Set the end date to the next Saturday
+
+            const filteredPharmacies = result.data.filter((pharmacy) => {
+               // const gardeStartDate = new Date(pharmacy.startDate);
+                const gardeEndDate = new Date(pharmacy.endDate);
+                const lastSunday = new Date(currentDate);
+                lastSunday.setDate(lastSunday.getDate() - currentDay);
+                lastSunday.setDate(lastSunday.getDate() - 7); // Subtract an additional 7 days to go back to the previous week
+
+                return gardeEndDate < lastSunday;
+            });
+        setPharmacies(filteredPharmacies)
+            console.log(filteredPharmacies);
         }
         fetchPharmacies();
 
         const fetchZones = async () => {
-            const result = await axios.get("/api/zones");
+            const result = await axios.get("http://localhost:8080/api/v1/zones",{ headers: authHeader() })
             setZones(result.data);
         }
         fetchZones();
@@ -35,8 +55,9 @@ export default function OndutyHistory() {
     const filteredPharmacies = isNight ? pharmacies.filter((pharmacy) => pharmacy.garde.type === "nuit") : pharmacies;
     //console.log(filteredPharmacies);
     return ( <>
-        <h2>history of on-duty pharmacies</h2>
+
         <div className="pharmacies-container">
+            <h2>History of on-duty pharmacies</h2>
             <Form>
                 <Form.Check
                     type="switch"
@@ -53,7 +74,7 @@ export default function OndutyHistory() {
                     <th>Address</th>
                     <th>Start</th>
                     <th>End</th>
-                    <th>Jour/Nuit</th>
+                    <th>Day/Night</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -83,6 +104,7 @@ export default function OndutyHistory() {
             </table>
 
         </div>
+
     </>)
 
 }

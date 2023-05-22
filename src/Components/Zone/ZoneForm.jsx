@@ -3,6 +3,7 @@ import axios from "axios";
 
 import Notiflix from 'notiflix';
 import {useNavigate} from "react-router-dom";
+import authHeader from "../../Services/auth-header";
 
 
 const ZoneForm = ({onZoneAdded}) => {
@@ -12,7 +13,7 @@ const ZoneForm = ({onZoneAdded}) => {
     let navigate = useNavigate();
 
     useEffect(() => {
-        axios.get("/api/cities").then((response) => {
+        axios.get("http://localhost:8080/api/v1/cities").then((response) => {
             setCities(response.data);
         });
     }, []);
@@ -26,10 +27,12 @@ const ZoneForm = ({onZoneAdded}) => {
             return;
         }
 
-        const data = new URLSearchParams(`name=${name}&cityId=${cityId}`);
-
         try {
-            const response = await axios.post(`/api/zones/save?${data}`);
+            const response = await axios.post(
+                `http://localhost:8080/api/v1/zones/save?name=${name}&cityId=${cityId}`,
+                {},
+                { headers: authHeader() }
+            );
 
             if (response.status === 200 || response.status === 201) {
                 setName("");
@@ -38,10 +41,12 @@ const ZoneForm = ({onZoneAdded}) => {
                 navigate(-1);
 
             } else {
+
                 Notiflix.Notify.failure('Failed to add zone');
 
             }
         } catch (error) {
+            console.log(error);
             Notiflix.Notify.failure('Failed to add zone');
         }
     };

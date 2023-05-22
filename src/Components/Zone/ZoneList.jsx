@@ -6,6 +6,8 @@ import ConfirmationModal from "../ConfirmationModel";
 import "../../styles/editZone-modal.css";
 import Notiflix from 'notiflix';
 import {Icon} from "leaflet/src/layer/marker";
+import authHeader from "../../Services/auth-header";
+import '../Pharmacy/cursor.css';
 
 
 export default function ZoneList({cityId}) {
@@ -19,7 +21,7 @@ export default function ZoneList({cityId}) {
     useEffect(() => {
 
         const fetchZones = async () => {
-            const result = await axios.get("/api/zones");
+            const result = await axios.get("http://localhost:8080/api/v1/zones", {headers: authHeader()});
             setZones(result.data);
             console.log(result.data);
         }
@@ -29,7 +31,7 @@ export default function ZoneList({cityId}) {
 
     useEffect(() => {
         const fetchCities = async () => {
-            const result = await axios.get("/api/cities");
+            const result = await axios.get("http://localhost:8080/api/v1/cities", {headers: authHeader()});
             setCities(result.data);
         };
         fetchCities();
@@ -41,7 +43,7 @@ export default function ZoneList({cityId}) {
     };
     const handleDelete = async () => {
         try {
-            const response = await axios.delete(`/api/zones/deleteZone/id=${zoneIdToDelete}`);
+            const response = await axios.delete(`http://localhost:8080/api/v1/zones/deleteZone/id=${zoneIdToDelete}`, {headers: authHeader()})
 
             if (response.status === 200 || response.status === 204) {
                 setZones(zones.filter((zone) => zone.id !== zoneIdToDelete));
@@ -73,13 +75,12 @@ export default function ZoneList({cityId}) {
     };
 
     const handleSave = async () => {
-        const data = new URLSearchParams();
-        data.append('name', selectedZone.name);
-        data.append('cityId', selectedZone.city.id);
 
         try {
-            const response = await axios.put(`/api/zones/${selectedZone.id}?${data}`);
-
+            const response = await axios.put(`http://localhost:8080/api/v1/zones/${selectedZone.id}?name=${selectedZone.name}&cityId=${selectedZone.city.id}`,
+                {},
+                {headers: authHeader()}
+            );
             if (response.status === 200 || response.status === 204) {
                 // Update the state with the updated data received from the API
                 setZones(zones.map((zone) => {
@@ -105,8 +106,7 @@ export default function ZoneList({cityId}) {
     };
 
     const openPharmacies = (zone_id) => {
-        navigate(`/zones/zone/${zone_id}/pharmacies`);
-
+        navigate(`/zones/zone/${zone_id}/pharmacies`, {headers: authHeader()})
     };
     const customIcon = new Icon({
         iconUrl: "https://cdn-icons-png.flaticon.com/512/1527/1527531.png",
@@ -114,7 +114,7 @@ export default function ZoneList({cityId}) {
     });
     return (
 
-        <>
+        <div className="pharmacies-container">
 
             <h2>Zones</h2>
             <Link to={`/add-zone`} className="btn btn-primary">
@@ -136,7 +136,7 @@ export default function ZoneList({cityId}) {
                     <td>{zone.name}</td>
                     <td>{zone.city && zone.city.name}</td>
                     <td>
-                        <img width={customIcon.options.iconSize[0]} height={customIcon.options.iconSize[1]}
+                        <img className="location-link" width={customIcon.options.iconSize[0]} height={customIcon.options.iconSize[1]}
                              src={customIcon.options.iconUrl} alt="Location Icon"
                              onClick={() => openPharmacies(zone.id)}
                         />
@@ -190,7 +190,7 @@ export default function ZoneList({cityId}) {
                 onCancel={() => setIsModalOpen2(false)}
                 message="Are you sure you want to delete this item?"
             />
-        </>
+        </div>
     );
 };
 

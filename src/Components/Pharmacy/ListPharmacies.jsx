@@ -14,7 +14,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import Form from "react-bootstrap/Form";
 import {Icon} from "leaflet/src/layer/marker";
-
+import authHeader from "../../Services/auth-header";
+import AuthService from "../../Services/auth.service";
+import './cursor.css';
 
 export default function ListPharmacies() {
     const [pharmacies, setPharmacies] = useState([]);
@@ -33,7 +35,7 @@ export default function ListPharmacies() {
     const [searchSelect, setSearchSelect] = useState('');
     const [filteredResults, setFilteredResults] = useState([]);
     useEffect(() => {
-        axios.get(`/api/zones`)
+        axios.get(`http://localhost:8080/api/v1/zones`, {headers: authHeader()})
             .then((response) => {
                 setZones(response.data);
             })
@@ -41,13 +43,14 @@ export default function ListPharmacies() {
 
     useEffect(() => {
         if (zoneId) {
-            axios.get(`/api/pharmacies/zone/id=${zoneId}`)
+            axios.get(`http://localhost:8080/api/v1/pharmacies/zone/id=${zoneId}`, {headers: authHeader()})
                 .then((response) => {
                     setPharmacies(response.data);
                 })
         } else {
-            axios.get(`/api/pharmacies`)
+            axios.get(`http://localhost:8080/api/v1/pharmacies`, {headers: authHeader()})
                 .then((response) => {
+                    //console.log(response.data);
                     setPharmacies(response.data);
                 })
         }
@@ -58,17 +61,27 @@ export default function ListPharmacies() {
         navigator.geolocation.getCurrentPosition((position) => {
             const {latitude, longitude} = position.coords;
             setCurrentLocation([latitude, longitude]);
-        }, (error) => {
 
         });
-
     }, [])
+
+    const [currentUser, setCurrentUser] = useState(undefined);
+
+    useEffect(() => {
+        const user = AuthService.getCurrentUser();
+
+        if (user) {
+            setCurrentUser(user);
+
+        }
+
+    }, []);
 
     const handleDelete = async (pharmacyId) => {
 
         Confirm.show('Delete Confirm', 'Are you you want to delete?', 'Delete', 'Abort', async () => {
             try {
-                const response = await axios.delete(`/api/pharmacies/deletePharmacy/id=${pharmacyId}`);
+                const response = await axios.delete(`http://localhost:8080/api/v1/pharmacies/deletePharmacy/id=${pharmacyId}`, {headers: authHeader()});
 
                 if (response.status === 200 || response.status === 204) {
                     setPharmacies(pharmacies.filter((pharmacy) => pharmacy.id !== pharmacyId));
@@ -118,12 +131,12 @@ export default function ListPharmacies() {
     const handleChangeState = (pharmacyId, newState) => {
         // Find the pharmacy in the list by its ID
         const pharmacyToUpdate = pharmacies.find(pharmacy => pharmacy.id === pharmacyId);
-        console.log(pharmacyToUpdate);
+       // console.log(pharmacyToUpdate);
         // Update the state of the pharmacy
         pharmacyToUpdate.state = newState;
         // eslint-disable-next-line no-unused-vars
-        const response = axios.put(`/api/pharmacies/${pharmacyId}/state`, newState, {
-            headers: {'Content-Type': 'application/json'}
+        const response = axios.put(`http://localhost:8080/api/v1/pharmacies/${pharmacyId}/state/${newState}`, null, {
+            headers: authHeader()
         }).then(response => {
             Notiflix.Notify.success("state has changed successfully ");
             setPharmacies(prevPharmacies => prevPharmacies.map(pharmacy => pharmacy.id === pharmacyToUpdate.id ? pharmacyToUpdate : pharmacy));
@@ -165,44 +178,52 @@ export default function ListPharmacies() {
 
     const renderPharmacy = (pharmacy) => {
         return (
-            <tbody>
+
             <tr key={pharmacy.id}>
                 <td>{pharmacy.id}</td>
                 <td>{pharmacy.name}</td>
                 <td>{pharmacy.address}</td>
+                <td>{pharmacy.phone}</td>
                 <td>{pharmacy.zone.name}</td>
                 <td>
                     {pharmacy.altitude !== 0 && pharmacy.longitude !== 0 && (
-                        <img width={customIcon.options.iconSize[0]} height={customIcon.options.iconSize[1]}
+                        <img className="location-link" width={customIcon.options.iconSize[0]} height={customIcon.options.iconSize[1]}
                              src={customIcon.options.iconUrl} alt="Location Icon"
                              onClick={() => showMap(pharmacy.altitude, pharmacy.longitude, pharmacy)
-                        }
+                             }
                         />
 
                     )}
                 </td>
-                <td>
-                    <div className="d-flex align-items-center">
+                {currentUser?.role === 'ADMIN' &&
+                    <td>
+                        <div className="d-flex align-items-center">
           <span
               className={`badge ${pharmacy.state === 0 ? "bg-warning" : pharmacy.state === 1 ? "bg-success" : pharmacy.state === 2 ? "bg-danger" : "inherit"}`}>
             {pharmacyStates[pharmacy.state]}
           </span>
-                        <DropdownButton id="state-dropdown" variant="outline-secondary" title="" size="sm">
-                            <Dropdown.Item onClick={() => handleChangeState(pharmacy.id, 0)}>Waiting</Dropdown.Item>
-                            <Dropdown.Item onClick={() => handleChangeState(pharmacy.id, 1)}>Accept</Dropdown.Item>
-                            <Dropdown.Item onClick={() => handleChangeState(pharmacy.id, 2)}>Refuse</Dropdown.Item>
-                        </DropdownButton>
-                    </div>
-                </td>
-                <td>
-                    <FontAwesomeIcon icon={faTrash} className="text-danger cursor"
-                                     onClick={() => handleDelete(pharmacy.id)}/>
-                    <button className="btn btn-secondary" onClick={() => handleEdit(pharmacy)}>
-                        Edit
-                    </button>
-                </td>
+
+                            <DropdownButton id="state-dropdown" variant="outline-secondary" title="" size="sm">
+                                <Dropdown.Item onClick={() => handleChangeState(pharmacy.id, 0)}>Waiting</Dropdown.Item>
+                                <Dropdown.Item onClick={() => handleChangeState(pharmacy.id, 1)}>Accept</Dropdown.Item>
+                                <Dropdown.Item onClick={() => handleChangeState(pharmacy.id, 2)}>Refuse</Dropdown.Item>
+                            </DropdownButton>
+
+                        </div>
+                    </td>
+                }
+                {currentUser?.role === 'ADMIN' &&
+                    <td>
+
+                        <FontAwesomeIcon icon={faTrash} className="location-link"
+                                         onClick={() => handleDelete(pharmacy.id)}/>
+                        <button className="btn btn-secondary" onClick={() => handleEdit(pharmacy)}>
+                            Edit
+                        </button>
+                    </td>
+                }
             </tr>
-            </tbody>
+
         );
 
     };
@@ -238,17 +259,18 @@ export default function ListPharmacies() {
                     <th>ID</th>
                     <th>Name</th>
                     <th>Address</th>
+                    <th>Phone Number</th>
                     <th>Zone</th>
                     <th>On Map</th>
-                    <th>State</th>
-                    <th>Actions</th>
+                    {currentUser?.role === 'ADMIN' && <th>State</th>}
+                    {currentUser?.role === 'ADMIN' && <th>Actions</th>}
                 </tr>
                 </thead>
-
+                <tbody>
                 {searchInput.length > 1
                     ? filteredResults.map((pharmacy) => renderPharmacy(pharmacy))
                     : pharmacies.map((pharmacy) => renderPharmacy(pharmacy))}
-
+                </tbody>
             </table>
             <Modal show={mapModalIsOpen} onHide={() => {
                 setMapModalIsOpen(false)
@@ -273,6 +295,7 @@ export default function ListPharmacies() {
             updatePharmacy={updatePharmacy}
             currentLocation={currentLocation}
         />)}
+
     </>)
 
 }

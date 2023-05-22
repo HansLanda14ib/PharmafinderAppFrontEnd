@@ -1,15 +1,14 @@
-import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
+import {MapContainer, Marker, Popup, TileLayer,Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "../../App.css";
 import {Icon} from "leaflet/src/layer/marker";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import React, {useEffect, useState, useCallback} from "react";
 import axios from "axios";
-import {Form} from "react-bootstrap";
-import {faTrash} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Confirm} from "notiflix/build/notiflix-confirm-aio";
-import Notiflix from "notiflix";
+import {Button, Card, Container} from "react-bootstrap";
+import authHeader from "../../Services/auth-header";
+import AuthService from "../../Services/auth.service";
+import handlePhoneNumberClick from './Map'
 
 
 const MapComponent = () => {
@@ -20,10 +19,23 @@ const MapComponent = () => {
     const [markers, setMarkers] = useState([]);
     const [selectedPharmacy, setSelectedPharmacy] = useState({});
     const [popupVisible, setPopupVisible] = useState(false);
+    // eslint-disable-next-line no-unused-vars
+    const [polylineCoords, setPolylineCoords] = useState(null); // Added state for polyline coordinates
+    const [currentUser, setCurrentUser] = useState(undefined);
 
+    useEffect(() => {
+        const user = AuthService.getCurrentUser();
+
+        if (user) {
+            setCurrentUser(user);
+
+        }
+
+    }, []);
     const fetchPharmacies = useCallback(async () => {
         try {
-            const response = await axios.get("/api/pharmacies");
+            const response = await axios.get("http://localhost:8080/api/v1/pharmacies", {headers: authHeader()})
+            console.log(response.data)
             setPharmacies(response.data);
             const markers = response.data.map((pharmacy) => ({
                 geocode: [pharmacy.altitude, pharmacy.longitude],
@@ -36,6 +48,11 @@ const MapComponent = () => {
     }, []);
 
     useEffect(() => {
+        const options = {
+            enableHighAccuracy: true, // Use GPS and other high-accuracy methods
+            timeout: 5000, // Wait up to 5 seconds for a location
+            maximumAge: 0, // Force the browser to get a fresh location (no caching)
+        };
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const {latitude, longitude} = position.coords;
@@ -43,7 +60,7 @@ const MapComponent = () => {
             },
             (error) => {
                 console.error(error);
-            }
+            },options
         );
     }, []);
 
@@ -61,117 +78,112 @@ const MapComponent = () => {
         iconSize: [50, 50],
     });
 
-    const handleDelete = async (pharmacyId) => {
-        Confirm.show(
-            "Delete Confirm",
-            "Are you sure you want to delete?",
-            "Delete",
-            "Cancel",
-            async () => {
-                try {
-                    const response = await axios.delete(
-                        `/api/pharmacies/deletePharmacy/id=${pharmacyId}`
-                    );
-                    if (response.status === 200 || response.status === 204) {
-                        setPharmacies((prevPharmacies) =>
-                            prevPharmacies.filter(
-                                (pharmacy) => pharmacy.id !== pharmacyId
-                            )
-                        );
-                        setMarkers((prevMarkers) =>
-                            prevMarkers.filter(
-                                (marker) => marker.pharmacy.id !== pharmacyId
-                            )
-                        );
-                        Notiflix.Notify.success("Pharmacy deleted successfully");
-                    } else {
-                        Notiflix.Notify.failure("Failed to delete Pharmacy");
-                    }
-                } catch (error) {
-                    Notiflix.Notify.failure("Failed to delete Pharmacy");
-                }
-            },
-            () => {
-                console.log("Cancel");
-            }
-        );
-    };
-
     const handleMarkerClick = useCallback((pharmacy) => {
         setSelectedPharmacy(pharmacy);
         setPopupVisible(true);
     }, []);
 
+
+    const handleGetDirectionsClick = () => {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const origin = `${latitude},${longitude}`;
+                    const { altitude, longitude: destinationLongitude } = selectedPharmacy;
+                    const destination = `${altitude},${destinationLongitude}`;
+                    const mapsURL = `https://www.google.com/maps/dir/${origin}/${destination}`;
+                    window.open(mapsURL);
+                },
+                (error) => {
+                    console.error("Error getting current position:", error);
+                }
+            );
+        } else {
+            console.error("Geolocation is not supported by this browser.");
+        }
+    };
+
     const MyPopup = ({pharmacy, visible, onClose}) => {
         return (<>
-            {pharmacy && visible && (<Popup onClose={onClose}>
-                <Form>
-                    <Form.Label style={{fontWeight: "bold"}}>Name:</Form.Label>
-                    {pharmacy.name}
-                    <br/>
-                    <Form.Label style={{fontWeight: "bold"}}>Address:</Form.Label>
-                    {pharmacy.address}
-                    <br/>
-                    <Form.Label style={{fontWeight: "bold"}}>State:</Form.Label>
-                    {pharmacy.state === 0 && <span>Waiting</span>}
-                    {pharmacy.state === 1 && <span>Accepted</span>}
-                    {pharmacy.state === 2 && <span>Refused</span>}
-                    <br/>
-                    <Form.Label style={{fontWeight: "bold"}}>Zone:</Form.Label>
-                    {pharmacy.zone.name}
-                    <br/>
-                    <Form.Label style={{fontWeight: "bold"}}>Location:</Form.Label>
-                    [{pharmacy.altitude.toFixed(3)}, {pharmacy.longitude.toFixed(3)}]
-                    <br/>
-                    <FontAwesomeIcon
-                        icon={faTrash}
-                        className="text-danger cursor"
-                        onClick={() => handleDelete(pharmacy.id)}
-                    />
-                </Form>
+            {pharmacy && visible && (
+                <Popup onClose={onClose}>
+                <Card >
+                    <Card.Body className="text-left">
+                        <Card.Title><strong>{pharmacy.name}</strong></Card.Title>
+                        <br/>
+                        <Card.Subtitle><strong>Address: </strong>{pharmacy.address}</Card.Subtitle>
+                        <br/>
+                        <Card.Subtitle><strong>Zone: </strong>{pharmacy.zone.name}</Card.Subtitle>
+                        <br/>
+                        <Card.Subtitle>
+                            <strong>Phone Number: </strong><a href={`tel:${pharmacy.phone}`} onClick={handlePhoneNumberClick}>{pharmacy.phone}</a>
+                        </Card.Subtitle>
+                        <br/>
+                        {currentUser?.role === 'ADMIN' &&
+                            <>
+                                <Card.Subtitle> <strong>State: </strong>
+                                    {pharmacy.state === 0 && <span>Waiting</span>}
+                                    {pharmacy.state === 1 && <span>Accepted</span>}
+                                    {pharmacy.state === 2 && <span>Refused</span>}
+                                </Card.Subtitle>
+
+                            </>
+                        }
+                        <br/>
+                        <Button variant="primary" onClick={handleGetDirectionsClick}>
+                            Get Directions
+                        </Button>
+                    </Card.Body>
+                </Card>
             </Popup>)}
         </>);
     };
 
+
     return (
         <>
-            <div className="home-container">
-                <h1>Welcome to Pharma Finder</h1>
-                <p>Find pharmacies near you, anytime.</p>
-                <MapContainer
-                    style={{height: "600px", width: "1400px"}}
-                    center={position}
-                    zoom={13}
-                    scrollWheelZoom={true}
+            <Container style={{backgroundColor: "#001e28"}}>
+                <div className="home-container">
+                    <h1>Welcome to Pharma Finder</h1>
+                    <p>Find pharmacies near you, anytime.</p>
+                    <MapContainer
+                        style={{height: "600px", width: "1300px"}}
+                        center={position}
+                        zoom={13}
+                        scrollWheelZoom={true}
+                    >
+                        <TileLayer
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                        <MarkerClusterGroup>
+                            {markers.map((marker) => (<Marker
+                                key={marker.pharmacy.id}
+                                icon={customIcon}
+                                position={marker.geocode}
+                                eventHandlers={{
+                                    click: () => handleMarkerClick(marker.pharmacy),
+                                }}
+                            >
+                                {selectedPharmacy && (<MyPopup
+                                    pharmacy={selectedPharmacy}
+                                    visible={popupVisible}
+                                    onClose={() => setPopupVisible(false)
 
-                >
-                    <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <MarkerClusterGroup>
-                        {markers.map((marker) => (<Marker
-                            key={marker.pharmacy.id}
-                            icon={customIcon}
-                            position={marker.geocode}
-                            eventHandlers={{
-                                click: () => handleMarkerClick(marker.pharmacy),
-                            }}
-                        >
-                            {selectedPharmacy && (<MyPopup
-                                pharmacy={selectedPharmacy}
-                                visible={popupVisible}
-                                onClose={() => setPopupVisible(false)}
-                            />)}
-                        </Marker>))}
-                    </MarkerClusterGroup>
-                    {currentLocation && (<Marker icon={userIcon} position={currentLocation}>
-                        <Popup>
-                            <h6> You are here </h6>
-                        </Popup>
-                    </Marker>)}
-                </MapContainer>
-            </div>
+                                }
+                                />)}
+                            </Marker>))}
+                        </MarkerClusterGroup>
+                        {currentLocation && (<Marker icon={userIcon} position={currentLocation}>
+                            <Popup>
+                                <h6> You are here </h6>
+                            </Popup>
+                        </Marker>)}
+                        {polylineCoords && <Polyline positions={polylineCoords} color="red" />} {/* Display the polyline */}
+                    </MapContainer>
+                </div>
+            </Container>
         </>
     )
         ;

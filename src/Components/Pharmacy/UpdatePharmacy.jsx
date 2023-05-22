@@ -3,14 +3,16 @@ import {Modal, Button, Form, FormGroup, FormControl} from 'react-bootstrap';
 import axios from "axios";
 import MapComponent from "../Map/MapComponent";
 import Notiflix from "notiflix";
+import authHeader from "../../Services/auth-header";
 
 const UpdatePharmacy = ({currentLocation, showModal, onHide, pharmacy, updatePharmacy}) => {
     const [updatedPharmacy, setUpdatedPharmacy] = React.useState(pharmacy);
     // eslint-disable-next-line no-unused-vars
     const [id, setId] = useState(updatedPharmacy?.id);
     // eslint-disable-next-line no-unused-vars
-    const [state, setState] = useState(updatedPharmacy?.id);
+    const [state, setState] = useState(updatedPharmacy?.state);
     const [name, setName] = useState(updatedPharmacy?.name);
+    const [phone, setPhone] = useState(updatedPharmacy?.phone);
     const [address, setAddress] = useState(updatedPharmacy?.address);
     const [altitude, setAltitude] = useState(updatedPharmacy?.altitude);
     const [longitude, setLongitude] = useState(updatedPharmacy?.longitude);
@@ -26,7 +28,7 @@ const UpdatePharmacy = ({currentLocation, showModal, onHide, pharmacy, updatePha
 
     useEffect(() => {
         const fetchZones = async () => {
-            const result = await axios.get("/api/zones");
+            const result = await axios.get("http://localhost:8080/api/v1/zones",{ headers: authHeader() })
             setZones(result.data);
             console.log(result.data);
         }
@@ -38,7 +40,7 @@ const UpdatePharmacy = ({currentLocation, showModal, onHide, pharmacy, updatePha
 
         const pharmacy = {
             id: id, state: state,
-            name: name, address: address, altitude: altitude, longitude: longitude, zone: {
+            name: name, address: address,phone:phone, altitude: altitude, longitude: longitude, zone: {
                 id: zoneId, name: zoneName
             }
         };
@@ -47,7 +49,7 @@ const UpdatePharmacy = ({currentLocation, showModal, onHide, pharmacy, updatePha
         try {
 
             // eslint-disable-next-line no-unused-vars
-            const response = await axios.put(`/api/pharmacies/${updatedPharmacy.id}/update`, pharmacy);
+            const response = await axios.put(`http://localhost:8080/api/v1/pharmacies/${updatedPharmacy.id}/update`, pharmacy,{ headers: authHeader() });
             updatePharmacy(pharmacy);
             Notiflix.Notify.success("Pharmacy has been updated");
             onHide();
@@ -86,6 +88,12 @@ const UpdatePharmacy = ({currentLocation, showModal, onHide, pharmacy, updatePha
 
                     </FormGroup>
                     <FormGroup>
+                        <Form.Label>Phone Number</Form.Label>
+                        <FormControl type="text" placeholder="" value={phone} required
+                                     onChange={(e) => setPhone(e.target.value)}/>
+
+                    </FormGroup>
+                    <FormGroup>
                         <Form.Label>Altitude</Form.Label>
                         <FormControl type="altitude" placeholder="" value={altitude} disabled required/>
                     </FormGroup>
@@ -115,7 +123,7 @@ const UpdatePharmacy = ({currentLocation, showModal, onHide, pharmacy, updatePha
                 <Button type="submit" variant="primary" onClick={handleSubmit}>
                     Save Changes
                 </Button>
-                {showMap && <div><MapComponent onSelect={handleCoordsSelected} center={currentLocation}/></div>}
+                {showMap && <div><MapComponent onSelect={handleCoordsSelected} center={[pharmacy.altitude,pharmacy.longitude]}/></div>}
             </Modal.Footer>
         </Modal>
     );
