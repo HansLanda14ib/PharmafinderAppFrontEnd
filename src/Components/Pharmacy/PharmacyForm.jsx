@@ -6,6 +6,7 @@ import axios from 'axios';
 import authHeader from '../../Services/auth-header';
 import MapComponent from "../Map/MapComponent";
 import Notiflix from "notiflix";
+import apiUrl from "../../config";
 
 function CreatePharmacy() {
     // eslint-disable-next-line no-unused-vars
@@ -25,7 +26,7 @@ function CreatePharmacy() {
             try {
                 const user = AuthService.getCurrentUser();
                 if (user) {
-                    const response = await axios.get(`http://localhost:8080/api/v1/pharmacies/user/${user.email}`, {headers: authHeader()});
+                    const response = await axios.get(`${apiUrl}/pharmacies/user/${user.email}`, {headers: authHeader()});
                     setPharmacy(response.data);
                     setId(response.data?.id ?? null);
                     setName(response.data?.name ?? '');
@@ -46,7 +47,7 @@ function CreatePharmacy() {
     }, []);
     useEffect(() => {
         const fetchZones = async () => {
-            const result = await axios.get("http://localhost:8080/api/v1/zones", {headers: authHeader()})
+            const result = await axios.get(`${apiUrl}/zones`, {headers: authHeader()})
             setZones(result.data);
 
         }
@@ -63,11 +64,13 @@ function CreatePharmacy() {
 
         try {
             if (!pharmacy.id) {
-                const response = await axios.post("http://localhost:8080/api/v1/pharmacies/save", pharmacy, {headers: authHeader()})
+                // eslint-disable-next-line no-unused-vars
+                const response = await axios.post(`${apiUrl}/pharmacies/save`, pharmacy, {headers: authHeader()})
                 Notiflix.Notify.success("Pharmacy has been updated");
             } else {
                 console.log(pharmacy.id)
-                const response = await axios.put(`http://localhost:8080/api/v1/pharmacies/${pharmacy.id}/update`, pharmacy, {headers: authHeader()});
+                // eslint-disable-next-line no-unused-vars
+                const response = await axios.put(`${apiUrl}/pharmacies/${pharmacy.id}/update`, pharmacy, {headers: authHeader()});
                 Notiflix.Notify.success("Pharmacy has been updated");
 
             }

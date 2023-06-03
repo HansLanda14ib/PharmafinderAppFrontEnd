@@ -40,7 +40,7 @@ const Navigation = ({currentUser}) => {
 
     return (
         <Container style={{backgroundColor: "#001e28"}}>
-            <Navbar style={{backgroundColor: "#001e28"}} expand="lg" className="shadow">
+            <Navbar style={{backgroundColor: "#001e28"}} expand="lg" >
                 <Container fluid>
                     <Navbar.Brand as={Link} to="/">
                         <img

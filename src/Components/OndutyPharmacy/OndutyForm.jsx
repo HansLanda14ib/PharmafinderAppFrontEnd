@@ -5,6 +5,7 @@ import axios from "axios";
 import AuthService from "../../Services/auth.service";
 import Notiflix from "notiflix";
 import authHeader from "../../Services/auth-header";
+import apiUrl from "../../config";
 
 
 export default function OndutyForm() {
@@ -17,7 +18,7 @@ export default function OndutyForm() {
 
     const fetchPharmacies = async () => {
         const user = AuthService.getCurrentUser();
-        const result = await axios.get(`http://localhost:8080/api/v1/pharmaciesgarde/pharmacy/${user.email}`, {headers: authHeader()});
+        const result = await axios.get(`${apiUrl}/pharmaciesgarde/pharmacy/${user.email}`, {headers: authHeader()});
         console.log(result.data);
         setPharmacies(result.data);
     };
@@ -34,11 +35,11 @@ export default function OndutyForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const email = AuthService.getCurrentUser().email;
-        const response = await axios.get(`http://localhost:8080/api/v1/pharmacies/user/${email}`);
+        const response = await axios.get(`${apiUrl}/pharmacies/user/${email}`);
         const pharmacy = response.data;
         const pharmacyId = pharmacy?.id;
         const parsedGardeId = parseInt(gardeId);
-        axios.put(`http://localhost:8080/api/v1/pharmaciesgarde/add/${pharmacyId}?gardeId=${parsedGardeId}&startDate=${startDate}&endDate=${endDate}`, {headers: authHeader()})
+        axios.put(`${apiUrl}/pharmaciesgarde/add/${pharmacyId}?gardeId=${parsedGardeId}&startDate=${startDate}&endDate=${endDate}`, {},{headers: authHeader()})
             .then(response => {
                 // Refresh the table by fetching the updated data
                 fetchPharmacies();
@@ -50,7 +51,7 @@ export default function OndutyForm() {
                 //console.log(response.data);
             })
             .catch(error => {
-
+console.log(error.response)
                 if (error.response.data.Approbation) {
                     Notiflix.Report.failure('Access Control', error.response.data.Approbation, 'Okay',);
                 }

@@ -4,12 +4,25 @@
     color: white;
 
 }
+.pharmaciesgarde-container h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: white;
+}
+.pharmaciesgarde-container p{
 
+    text-align: center;
+}
 .pharmacies-container h2 {
     font-size: 36px;
     margin-bottom: 20px;
     text-align: center;
     color: white;
+}
+.pharmacies-container p{
+
+    text-align: center;
 }
 
 .pharmacies-container table {

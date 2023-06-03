@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
 import axios from "axios";
 import authHeader from "../../Services/auth-header";
+import apiUrl from "../../config";
 
 
 
@@ -11,7 +12,7 @@ const CityList = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const result = await axios.get("http://localhost:8080/api/v1/cities",{ headers: authHeader() });
+            const result = await axios.get(`${apiUrl}/cities`,{ headers: authHeader() });
             setCities(result.data);
 
         };
@@ -21,7 +22,7 @@ const CityList = () => {
 
     const handleDelete = (id) => {
         if (window.confirm("Are you sure you want to delete this city?")) {
-            axios.delete(`http://localhost:8080/api/v1/cities/${id}`,{headers: authHeader() }).then(() => {
+            axios.delete(`${apiUrl}/cities/${id}`,{headers: authHeader() }).then(() => {
                 setCities(cities.filter((city) => city.id !== id));
             });
         }
@@ -30,7 +31,7 @@ const CityList = () => {
     const handleEdit = (id) => {
         const newName = window.prompt("Enter the new name for this city:");
         if (newName) {
-            axios.put(`http://localhost:8080/api/v1/cities/${id}`, {name: newName},{ headers: authHeader() }).then(() => {
+            axios.put(`${apiUrl}/cities/${id}`, {name: newName},{ headers: authHeader() }).then(() => {
                 setCities(cities.map((city) => {
                     if (city.id === id) {
                         return {...city, name: newName};

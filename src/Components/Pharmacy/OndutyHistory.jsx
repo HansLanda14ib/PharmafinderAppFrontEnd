@@ -3,6 +3,7 @@ import axios from "axios";
 import "../../styles/editZone-modal.css";
 import {Form} from "react-bootstrap";
 import authHeader from "../../Services/auth-header";
+import apiUrl from "../../config";
 
 export default function OndutyHistory() {
     const [pharmacies, setPharmacies] = useState([]);
@@ -15,7 +16,7 @@ export default function OndutyHistory() {
     useEffect(() => {
         const fetchPharmacies = async () => {
 
-               const result = await axios.get("http://localhost:8080/api/v1/pharmaciesgarde/all",{ headers: authHeader() })
+               const result = await axios.get(`${apiUrl}/pharmaciesgarde/all`,{ headers: authHeader() })
             console.log(result.data);
             // Filter pharmacies based on the date criteria
             const currentDate = new Date(); // Get the current date
@@ -40,7 +41,7 @@ export default function OndutyHistory() {
         fetchPharmacies();
 
         const fetchZones = async () => {
-            const result = await axios.get("http://localhost:8080/api/v1/zones",{ headers: authHeader() })
+            const result = await axios.get(`${apiUrl}/zones`,{ headers: authHeader() })
             setZones(result.data);
         }
         fetchZones();

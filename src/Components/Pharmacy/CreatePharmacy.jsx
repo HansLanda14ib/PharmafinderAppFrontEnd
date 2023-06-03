@@ -8,6 +8,7 @@ import Notiflix from "notiflix";
 import MapComponent from "../Map/MapComponent";
 import authHeader from "../../Services/auth-header";
 import AuthService from "../../Services/auth.service";
+import apiUrl from "../../config";
 
 
 function CreatePharmacy(props) {
@@ -40,7 +41,7 @@ function CreatePharmacy(props) {
     }, []);
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/v1/cities", {headers: authHeader()}).then((response) => {
+        axios.get(`${apiUrl}/cities`, {headers: authHeader()}).then((response) => {
             setCities(response.data);
         });
     }, []);
@@ -54,7 +55,7 @@ function CreatePharmacy(props) {
             }
         };
         console.log(pharmacy);
-        await axios.post("http://localhost:8080/api/v1/pharmacies/save", pharmacy, {headers: authHeader()})
+        await axios.post(`${apiUrl}/pharmacies/save`, pharmacy, {headers: authHeader()})
             .then(response => {
                 Notiflix.Notify.success("Pharmacy added successfully");
                 setShowModalCreate(false);
@@ -91,7 +92,7 @@ function CreatePharmacy(props) {
     const handleCityChange = (e) => {
         const cityId = e.target.value;
         setCityId(cityId);
-        axios.get(`http://localhost:8080/api/v1/zones/zone/city=${cityId}`, {headers: authHeader()})
+        axios.get(`${apiUrl}/zones/zone/city=${cityId}`, {headers: authHeader()})
             .then((response) => {
                 setZones(response.data);
             });

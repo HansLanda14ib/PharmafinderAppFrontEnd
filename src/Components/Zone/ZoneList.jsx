@@ -8,6 +8,7 @@ import Notiflix from 'notiflix';
 import {Icon} from "leaflet/src/layer/marker";
 import authHeader from "../../Services/auth-header";
 import '../Pharmacy/cursor.css';
+import apiUrl from "../../config";
 
 
 export default function ZoneList({cityId}) {
@@ -21,7 +22,7 @@ export default function ZoneList({cityId}) {
     useEffect(() => {
 
         const fetchZones = async () => {
-            const result = await axios.get("http://localhost:8080/api/v1/zones", {headers: authHeader()});
+            const result = await axios.get(`${apiUrl}/zones`, {headers: authHeader()});
             setZones(result.data);
             console.log(result.data);
         }
@@ -31,7 +32,7 @@ export default function ZoneList({cityId}) {
 
     useEffect(() => {
         const fetchCities = async () => {
-            const result = await axios.get("http://localhost:8080/api/v1/cities", {headers: authHeader()});
+            const result = await axios.get(`${apiUrl}/cities`, {headers: authHeader()});
             setCities(result.data);
         };
         fetchCities();
@@ -43,7 +44,7 @@ export default function ZoneList({cityId}) {
     };
     const handleDelete = async () => {
         try {
-            const response = await axios.delete(`http://localhost:8080/api/v1/zones/deleteZone/id=${zoneIdToDelete}`, {headers: authHeader()})
+            const response = await axios.delete(`${apiUrl}/zones/deleteZone/id=${zoneIdToDelete}`, {headers: authHeader()})
 
             if (response.status === 200 || response.status === 204) {
                 setZones(zones.filter((zone) => zone.id !== zoneIdToDelete));
@@ -77,7 +78,7 @@ export default function ZoneList({cityId}) {
     const handleSave = async () => {
 
         try {
-            const response = await axios.put(`http://localhost:8080/api/v1/zones/${selectedZone.id}?name=${selectedZone.name}&cityId=${selectedZone.city.id}`,
+            const response = await axios.put(`${apiUrl}/zones/${selectedZone.id}?name=${selectedZone.name}&cityId=${selectedZone.city.id}`,
                 {},
                 {headers: authHeader()}
             );

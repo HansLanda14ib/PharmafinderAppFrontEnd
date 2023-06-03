@@ -17,6 +17,7 @@ import {Icon} from "leaflet/src/layer/marker";
 import authHeader from "../../Services/auth-header";
 import AuthService from "../../Services/auth.service";
 import './cursor.css';
+import apiUrl from "../../config";
 
 export default function ListPharmacies() {
     const [pharmacies, setPharmacies] = useState([]);
@@ -35,7 +36,7 @@ export default function ListPharmacies() {
     const [searchSelect, setSearchSelect] = useState('');
     const [filteredResults, setFilteredResults] = useState([]);
     useEffect(() => {
-        axios.get(`http://localhost:8080/api/v1/zones`, {headers: authHeader()})
+        axios.get(`${apiUrl}/zones`, {headers: authHeader()})
             .then((response) => {
                 setZones(response.data);
             })
@@ -43,12 +44,12 @@ export default function ListPharmacies() {
 
     useEffect(() => {
         if (zoneId) {
-            axios.get(`http://localhost:8080/api/v1/pharmacies/zone/id=${zoneId}`, {headers: authHeader()})
+            axios.get(`${apiUrl}/pharmacies/zone/id=${zoneId}`, {headers: authHeader()})
                 .then((response) => {
                     setPharmacies(response.data);
                 })
         } else {
-            axios.get(`http://localhost:8080/api/v1/pharmacies`, {headers: authHeader()})
+            axios.get(`${apiUrl}/pharmacies`, {headers: authHeader()})
                 .then((response) => {
                     //console.log(response.data);
                     setPharmacies(response.data);
@@ -81,7 +82,7 @@ export default function ListPharmacies() {
 
         Confirm.show('Delete Confirm', 'Are you you want to delete?', 'Delete', 'Abort', async () => {
             try {
-                const response = await axios.delete(`http://localhost:8080/api/v1/pharmacies/deletePharmacy/id=${pharmacyId}`, {headers: authHeader()});
+                const response = await axios.delete(`${apiUrl}/pharmacies/deletePharmacy/id=${pharmacyId}`, {headers: authHeader()});
 
                 if (response.status === 200 || response.status === 204) {
                     setPharmacies(pharmacies.filter((pharmacy) => pharmacy.id !== pharmacyId));
@@ -135,7 +136,7 @@ export default function ListPharmacies() {
         // Update the state of the pharmacy
         pharmacyToUpdate.state = newState;
         // eslint-disable-next-line no-unused-vars
-        const response = axios.put(`http://localhost:8080/api/v1/pharmacies/${pharmacyId}/state/${newState}`, null, {
+        const response = axios.put(`${apiUrl}/pharmacies/${pharmacyId}/state/${newState}`, null, {
             headers: authHeader()
         }).then(response => {
             Notiflix.Notify.success("state has changed successfully ");
@@ -180,7 +181,6 @@ export default function ListPharmacies() {
         return (
 
             <tr key={pharmacy.id}>
-                <td>{pharmacy.id}</td>
                 <td>{pharmacy.name}</td>
                 <td>{pharmacy.address}</td>
                 <td>{pharmacy.phone}</td>
@@ -256,7 +256,6 @@ export default function ListPharmacies() {
             <table className="table">
                 <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Name</th>
                     <th>Address</th>
                     <th>Phone Number</th>

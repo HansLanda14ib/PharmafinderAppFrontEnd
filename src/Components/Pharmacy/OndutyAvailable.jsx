@@ -11,6 +11,7 @@ import {Icon} from "leaflet/src/layer/marker";
 import authHeader from "../../Services/auth-header";
 import AuthService from "../../Services/auth.service";
 import './cursor.css';
+import apiUrl from "../../config";
 
 export default function OndutyAvailable() {
     const [pharmacies, setPharmacies] = useState([]);
@@ -48,11 +49,11 @@ export default function OndutyAvailable() {
                 let result;
                 // console.log(location.pathname);
                 if (location.pathname.includes("now") && isNightTime) {
-                    result = await axios.get("http://localhost:8080/api/v1/pharmaciesgarde/allDispoPharmacies/garde/2", {headers: authHeader()})
+                    result = await axios.get(`${apiUrl}/pharmaciesgarde/allDispoPharmacies/garde/2`, {headers: authHeader()})
                 } else if (location.pathname.includes("now") && !isNightTime) {
-                    result = await axios.get("http://localhost:8080/api/v1/pharmaciesgarde/allDispoPharmacies/garde/1", {headers: authHeader()})
+                    result = await axios.get(`${apiUrl}/pharmaciesgarde/allDispoPharmacies/garde/1`, {headers: authHeader()})
                 } else {
-                    result = await axios.get("http://localhost:8080/api/v1/pharmaciesgarde/allDispoPharmacies", {headers: authHeader()})
+                    result = await axios.get(`${apiUrl}/pharmaciesgarde/allDispoPharmacies`, {headers: authHeader()})
 
                 }
                 setPharmacies(result.data);
@@ -60,7 +61,7 @@ export default function OndutyAvailable() {
             fetchPharmacies();
 
             const fetchZones = async () => {
-                const result = await axios.get("http://localhost:8080/api/v1/zones", {headers: authHeader()})
+                const result = await axios.get(`${apiUrl}/zones`, {headers: authHeader()})
                 setZones(result.data);
             }
             fetchZones();
@@ -122,14 +123,14 @@ export default function OndutyAvailable() {
             )}
 
             {filteredPharmacies.length > 0 ? (
-                <Card style={{backgroundColor: 'transparent'}} >
-                    <Card.Body  style={{backgroundColor: 'transparent',borderRadius: "10px"}}>
+                <Card style={{backgroundColor: 'transparent',justifyContent: "center",display: "flex"}} >
+                    <Card.Body  style={{backgroundColor: 'transparent',borderRadius: "10px",justifyContent: "center",display: "flex"}}>
                         <Row>
                             {filteredPharmacies.map((pharmacy) => (
                                 <Col key={pharmacy.pharmacy.id} xs={12} md={6} lg={4}>
-                                    <Card  style={{backgroundColor: 'transparent'}}>
+                                    <Card  style={{backgroundColor: 'transparent',justifyContent: "center",display: "flex"}}>
                                         <Card.Body style={{color: 'white',backgroundColor: '#246d7d',borderRadius: "10px"}}>
-                                            <Card.Title>{pharmacy.pharmacy.name.toUpperCase()}</Card.Title>
+                                            <Card.Title style={{justifyContent: "center",display: "flex"}}>{pharmacy.pharmacy.name.toUpperCase()}</Card.Title>
                                             <Card.Text>Address: {pharmacy.pharmacy.address}
 
                                                 {pharmacy.altitude !== 0 && pharmacy.longitude !== 0 && (
@@ -145,8 +146,6 @@ export default function OndutyAvailable() {
                                                 )}
 
                                             </Card.Text>
-
-
                                             <Card.Text>Phone Number: {pharmacy.pharmacy.phone}</Card.Text>
                                         </Card.Body>
                                     </Card>

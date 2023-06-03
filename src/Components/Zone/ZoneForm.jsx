@@ -4,6 +4,7 @@ import axios from "axios";
 import Notiflix from 'notiflix';
 import {useNavigate} from "react-router-dom";
 import authHeader from "../../Services/auth-header";
+import apiUrl from "../../config";
 
 
 const ZoneForm = ({onZoneAdded}) => {
@@ -13,7 +14,7 @@ const ZoneForm = ({onZoneAdded}) => {
     let navigate = useNavigate();
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/v1/cities").then((response) => {
+        axios.get(`${apiUrl}/v1/cities`).then((response) => {
             setCities(response.data);
         });
     }, []);
@@ -29,7 +30,7 @@ const ZoneForm = ({onZoneAdded}) => {
 
         try {
             const response = await axios.post(
-                `http://localhost:8080/api/v1/zones/save?name=${name}&cityId=${cityId}`,
+                `${apiUrl}/zones/save?name=${name}&cityId=${cityId}`,
                 {},
                 { headers: authHeader() }
             );

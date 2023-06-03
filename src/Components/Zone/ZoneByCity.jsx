@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import authHeader from "../../Services/auth-header";
+import apiUrl from "../../config";
 
 const ZoneByCity = () => {
   const [zones, setZones] = useState([]);
@@ -8,7 +9,7 @@ const ZoneByCity = () => {
   const [selectedCityId, setSelectedCityId] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/v1/cities",{ headers: authHeader() }).then((response) => {
+    axios.get(`${apiUrl}/cities`,{ headers: authHeader() }).then((response) => {
       setCities(response.data);
     });
   }, []);
@@ -17,12 +18,12 @@ const ZoneByCity = () => {
     const cityId = event.target.value;
     setSelectedCityId(cityId);
     if(cityId !==0){
-      axios.get(`http://localhost:8080/api/v1/zones/zone/city=${cityId}`,{ headers: authHeader() }).then((response) => {
+      axios.get(`${apiUrl}/zones/zone/city=${cityId}`,{ headers: authHeader() }).then((response) => {
         setZones(response.data);
       });
     }
     else{
-      axios.get(`http://localhost:8080/api/v1/zones`,{ headers: authHeader() }).then((response) => {
+      axios.get(`${apiUrl}/zones`,{ headers: authHeader() }).then((response) => {
         setZones(response.data);
     });
     }

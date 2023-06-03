@@ -4,6 +4,7 @@ import axios from "axios";
 import MapComponent from "../Map/MapComponent";
 import Notiflix from "notiflix";
 import authHeader from "../../Services/auth-header";
+import apiUrl from "../../config";
 
 const UpdatePharmacy = ({currentLocation, showModal, onHide, pharmacy, updatePharmacy}) => {
     const [updatedPharmacy, setUpdatedPharmacy] = React.useState(pharmacy);
@@ -28,7 +29,7 @@ const UpdatePharmacy = ({currentLocation, showModal, onHide, pharmacy, updatePha
 
     useEffect(() => {
         const fetchZones = async () => {
-            const result = await axios.get("http://localhost:8080/api/v1/zones",{ headers: authHeader() })
+            const result = await axios.get(`${apiUrl}/zones`,{ headers: authHeader() })
             setZones(result.data);
             console.log(result.data);
         }
@@ -49,7 +50,7 @@ const UpdatePharmacy = ({currentLocation, showModal, onHide, pharmacy, updatePha
         try {
 
             // eslint-disable-next-line no-unused-vars
-            const response = await axios.put(`http://localhost:8080/api/v1/pharmacies/${updatedPharmacy.id}/update`, pharmacy,{ headers: authHeader() });
+            const response = await axios.put(`${apiUrl}/pharmacies/${updatedPharmacy.id}/update`, pharmacy,{ headers: authHeader() });
             updatePharmacy(pharmacy);
             Notiflix.Notify.success("Pharmacy has been updated");
             onHide();

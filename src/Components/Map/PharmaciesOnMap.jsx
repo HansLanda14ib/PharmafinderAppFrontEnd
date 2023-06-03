@@ -1,14 +1,15 @@
-import {MapContainer, Marker, Popup, TileLayer,Polyline } from "react-leaflet";
+import {MapContainer, Marker, Popup, TileLayer, Polyline} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "../../App.css";
 import {Icon} from "leaflet/src/layer/marker";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import React, {useEffect, useState, useCallback} from "react";
 import axios from "axios";
-import {Button, Card, Container} from "react-bootstrap";
+import {Button, Card} from "react-bootstrap";
 import authHeader from "../../Services/auth-header";
 import AuthService from "../../Services/auth.service";
 import handlePhoneNumberClick from './Map'
+import apiUrl from "../../config";
 
 
 const MapComponent = () => {
@@ -34,7 +35,7 @@ const MapComponent = () => {
     }, []);
     const fetchPharmacies = useCallback(async () => {
         try {
-            const response = await axios.get("http://localhost:8080/api/v1/pharmacies", {headers: authHeader()})
+            const response = await axios.get(`${apiUrl}/pharmacies`, {headers: authHeader()})
             console.log(response.data)
             setPharmacies(response.data);
             const markers = response.data.map((pharmacy) => ({
@@ -60,7 +61,7 @@ const MapComponent = () => {
             },
             (error) => {
                 console.error(error);
-            },options
+            }, options
         );
     }, []);
 
@@ -88,9 +89,9 @@ const MapComponent = () => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const { latitude, longitude } = position.coords;
+                    const {latitude, longitude} = position.coords;
                     const origin = `${latitude},${longitude}`;
-                    const { altitude, longitude: destinationLongitude } = selectedPharmacy;
+                    const {altitude, longitude: destinationLongitude} = selectedPharmacy;
                     const destination = `${altitude},${destinationLongitude}`;
                     const mapsURL = `https://www.google.com/maps/dir/${origin}/${destination}`;
                     window.open(mapsURL);
@@ -108,85 +109,85 @@ const MapComponent = () => {
         return (<>
             {pharmacy && visible && (
                 <Popup onClose={onClose}>
-                <Card >
-                    <Card.Body className="text-left">
-                        <Card.Title><strong>{pharmacy.name}</strong></Card.Title>
-                        <br/>
-                        <Card.Subtitle><strong>Address: </strong>{pharmacy.address}</Card.Subtitle>
-                        <br/>
-                        <Card.Subtitle><strong>Zone: </strong>{pharmacy.zone.name}</Card.Subtitle>
-                        <br/>
-                        <Card.Subtitle>
-                            <strong>Phone Number: </strong><a href={`tel:${pharmacy.phone}`} onClick={handlePhoneNumberClick}>{pharmacy.phone}</a>
-                        </Card.Subtitle>
-                        <br/>
-                        {currentUser?.role === 'ADMIN' &&
-                            <>
-                                <Card.Subtitle> <strong>State: </strong>
-                                    {pharmacy.state === 0 && <span>Waiting</span>}
-                                    {pharmacy.state === 1 && <span>Accepted</span>}
-                                    {pharmacy.state === 2 && <span>Refused</span>}
-                                </Card.Subtitle>
+                    <Card>
+                        <Card.Body className="text-left">
+                            <Card.Title><strong>{pharmacy.name}</strong></Card.Title>
+                            <br/>
+                            <Card.Subtitle><strong>Address: </strong>{pharmacy.address}</Card.Subtitle>
+                            <br/>
+                            <Card.Subtitle><strong>Zone: </strong>{pharmacy.zone.name}</Card.Subtitle>
+                            <br/>
+                            <Card.Subtitle>
+                                <strong>Phone Number: </strong><a href={`tel:${pharmacy.phone}`}
+                                                                  onClick={handlePhoneNumberClick}>{pharmacy.phone}</a>
+                            </Card.Subtitle>
+                            <br/>
+                            {currentUser?.role === 'ADMIN' &&
+                                <>
+                                    <Card.Subtitle> <strong>State: </strong>
+                                        {pharmacy.state === 0 && <span>Waiting</span>}
+                                        {pharmacy.state === 1 && <span>Accepted</span>}
+                                        {pharmacy.state === 2 && <span>Refused</span>}
+                                    </Card.Subtitle>
 
-                            </>
-                        }
-                        <br/>
-                        <Button variant="primary" onClick={handleGetDirectionsClick}>
-                            Get Directions
-                        </Button>
-                    </Card.Body>
-                </Card>
-            </Popup>)}
+                                </>
+                            }
+                            <br/>
+                            <Button variant="primary" onClick={handleGetDirectionsClick}>
+                                Get Directions
+                            </Button>
+                        </Card.Body>
+                    </Card>
+                </Popup>)}
         </>);
     };
 
 
     return (
-        <>
-            <Container style={{backgroundColor: "#001e28"}}>
-                <div className="home-container">
-                    <h1>Welcome to Pharma Finder</h1>
-                    <p>Find pharmacies near you, anytime.</p>
-                    <MapContainer
-                        style={{height: "600px", width: "1300px"}}
-                        center={position}
-                        zoom={13}
-                        scrollWheelZoom={true}
-                    >
-                        <TileLayer
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        />
-                        <MarkerClusterGroup>
-                            {markers.map((marker) => (<Marker
-                                key={marker.pharmacy.id}
-                                icon={customIcon}
-                                position={marker.geocode}
-                                eventHandlers={{
-                                    click: () => handleMarkerClick(marker.pharmacy),
-                                }}
-                            >
-                                {selectedPharmacy && (<MyPopup
-                                    pharmacy={selectedPharmacy}
-                                    visible={popupVisible}
-                                    onClose={() => setPopupVisible(false)
+        <div className="pharmacies-container">
+            <h2>Welcome to Pharma Finder</h2>
+            <p>Find pharmacies near you, anytime.</p>
+<div style={{ justifyContent: "center",display: "flex"}}>
+    <MapContainer
+        style={{height: "600px", width: "1000px"}}
+        center={position}
+        zoom={13}
+        scrollWheelZoom={true}
+    >
+        <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <MarkerClusterGroup>
+            {markers.map((marker) => (<Marker
+                key={marker.pharmacy.id}
+                icon={customIcon}
+                position={marker.geocode}
+                eventHandlers={{
+                    click: () => handleMarkerClick(marker.pharmacy),
+                }}
+            >
+                {selectedPharmacy && (<MyPopup
+                    pharmacy={selectedPharmacy}
+                    visible={popupVisible}
+                    onClose={() => setPopupVisible(false)
 
-                                }
-                                />)}
-                            </Marker>))}
-                        </MarkerClusterGroup>
-                        {currentLocation && (<Marker icon={userIcon} position={currentLocation}>
-                            <Popup>
-                                <h6> You are here </h6>
-                            </Popup>
-                        </Marker>)}
-                        {polylineCoords && <Polyline positions={polylineCoords} color="red" />} {/* Display the polyline */}
-                    </MapContainer>
-                </div>
-            </Container>
-        </>
-    )
-        ;
+                    }
+                />)}
+            </Marker>))}
+        </MarkerClusterGroup>
+        {currentLocation && (<Marker icon={userIcon} position={currentLocation}>
+            <Popup>
+                <h6> You are here </h6>
+            </Popup>
+        </Marker>)}
+        {polylineCoords &&
+            <Polyline positions={polylineCoords} color="red"/>} {/* Display the polyline */}
+    </MapContainer>
+</div>
+
+        </div>
+    );
 
 }
 export default MapComponent;
