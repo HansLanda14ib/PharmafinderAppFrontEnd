@@ -1,6 +1,5 @@
 import {Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
-import logo from '../../images/logo.png'
 import '../../styles/navigation.css'
 import AuthService from "../../Services/auth.service";
 import {Link} from "react-router-dom";
@@ -45,7 +44,7 @@ const Navigation = ({currentUser}) => {
                     <Navbar.Brand as={Link} to="/">
                         <img
                             alt=""
-                            src={logo}
+                            src="/src/images/logo.png"
                             width="30"
                             height="30"
                             className="d-inline-block align-top"
