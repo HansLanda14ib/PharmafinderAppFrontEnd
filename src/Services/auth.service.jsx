@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8081/api/v1/auth/";
+const API_URL = "https://pharmafinder.up.railway.app/api/v1/auth/";
 
 const register = (role,
                   email,
