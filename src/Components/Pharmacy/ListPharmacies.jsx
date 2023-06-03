@@ -18,6 +18,144 @@ import authHeader from "../../Services/auth-header";
 import AuthService from "../../Services/auth.service";
 import './cursor.css';
 import apiUrl from "../../config";
+ const mypharmacies=[
+     {
+         "id": 1,
+         "name": "manar pharmacy",
+         "address": "a marrakech hivernage",
+         "phone": "0688033778",
+         "altitude": 31.621228395415503,
+         "longitude": -8.027744293212892,
+         "state": 1,
+         "zone": {
+             "id": 1,
+             "name": "Hivernage",
+             "city": {
+                 "id": 1,
+                 "name": "Marrakech"
+             }
+         }
+     },
+     {
+         "id": 2,
+         "name": "labase pharmacy",
+         "address": "targa",
+         "phone": "0524033787",
+         "altitude": 31.651262566610033,
+         "longitude": -8.058128356933596,
+         "state": 1,
+         "zone": {
+             "id": 2,
+             "name": "Sidi ghanem",
+             "city": {
+                 "id": 1,
+                 "name": "Marrakech"
+             }
+         }
+     },
+     {
+         "id": 4,
+         "name": "talbourjt pharmacy",
+         "address": "a talbourjt agadir",
+         "phone": "0688093778",
+         "altitude": 30.412632322494165,
+         "longitude": -9.566345214843752,
+         "state": 1,
+         "zone": {
+             "id": 12,
+             "name": "Talbourjt",
+             "city": {
+                 "id": 6,
+                 "name": "Agadir"
+             }
+         }
+     },
+     {
+         "id": 5,
+         "name": "pharmacy taddart",
+         "address": "a taddart agadir",
+         "phone": "0688037896",
+         "altitude": 30.46472888494151,
+         "longitude": -9.549865722656252,
+         "state": 2,
+         "zone": {
+             "id": 13,
+             "name": "Taddart",
+             "city": {
+                 "id": 6,
+                 "name": "Agadir"
+             }
+         }
+     },
+     {
+         "id": 6,
+         "name": "pharmacy agdal",
+         "address": "au agdal rabat",
+         "phone": "0688037896",
+         "altitude": 34.03078943899101,
+         "longitude": -6.826629638671876,
+         "state": 2,
+         "zone": {
+             "id": 8,
+             "name": "Agadal",
+             "city": {
+                 "id": 3,
+                 "name": "Rabat"
+             }
+         }
+     },
+     {
+         "id": 7,
+         "name": "pharmacy ainchok",
+         "address": "a Ain chock Casa",
+         "phone": "0688037896",
+         "altitude": 33.56328275381754,
+         "longitude": -7.597045898437501,
+         "state": 1,
+         "zone": {
+             "id": 11,
+             "name": "Ainchok",
+             "city": {
+                 "id": 2,
+                 "name": "Casablanca"
+             }
+         }
+     },
+     {
+         "id": 8,
+         "name": "pharmacy medina ",
+         "address": "a medina marrakech ",
+         "phone": "0688037809",
+         "altitude": 31.644150729333415,
+         "longitude": -7.9737424859195025,
+         "state": 1,
+         "zone": {
+             "id": 9,
+             "name": "Medina",
+             "city": {
+                 "id": 1,
+                 "name": "Marrakech"
+             }
+         }
+     },
+     {
+         "id": 9,
+         "name": "pharmacy sidi ghanem",
+         "address": "a sidi ghanem marrakech",
+         "phone": "0688037896",
+         "altitude": 31.66763660225885,
+         "longitude": -8.03203582763672,
+         "state": 1,
+         "zone": {
+             "id": 2,
+             "name": "Sidi ghanem",
+             "city": {
+                 "id": 1,
+                 "name": "Marrakech"
+             }
+         }
+     }
+ ]
 
 export default function ListPharmacies() {
     const [pharmacies, setPharmacies] = useState([]);
@@ -268,7 +406,7 @@ export default function ListPharmacies() {
                 <tbody>
                 {searchInput.length > 1
                     ? filteredResults.map((pharmacy) => renderPharmacy(pharmacy))
-                    : pharmacies.map((pharmacy) => renderPharmacy(pharmacy))}
+                    : mypharmacies.map((pharmacy) => renderPharmacy(pharmacy))}
                 </tbody>
             </table>
             <Modal show={mapModalIsOpen} onHide={() => {
