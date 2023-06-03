@@ -10,7 +10,7 @@ import authHeader from "../../Services/auth-header";
 import AuthService from "../../Services/auth.service";
 import handlePhoneNumberClick from './Map'
 import apiUrl from "../../config";
-
+import mypharmacies from "../Pharmacy/ListPharmacies"
 
 const MapComponent = () => {
     const position = [31.611530277838078, -8.047648552164675];
@@ -37,7 +37,8 @@ const MapComponent = () => {
         try {
             const response = await axios.get(`${apiUrl}/pharmacies`, {headers: authHeader()})
             console.log(response.data)
-            setPharmacies(response.data);
+            //setPharmacies(response.data);
+            setPharmacies(mypharmacies);
             const markers = response.data.map((pharmacy) => ({
                 geocode: [pharmacy.altitude, pharmacy.longitude],
                 pharmacy: pharmacy,
