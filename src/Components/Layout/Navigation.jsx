@@ -44,7 +44,7 @@ const Navigation = ({currentUser}) => {
                     <Navbar.Brand as={Link} to="/">
                         <img
                             alt=""
-                            src="/src/images/logo.png"
+                            src="https://i.im.ge/2023/06/03/hY4m4X.logo.png"
                             width="30"
                             height="30"
                             className="d-inline-block align-top"
