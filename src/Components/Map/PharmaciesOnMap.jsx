@@ -16,7 +16,7 @@ const MapComponent = () => {
     const position = [31.611530277838078, -8.047648552164675];
     const [currentLocation, setCurrentLocation] = useState(null);
     // eslint-disable-next-line no-unused-vars
-    const [pharmacies, setPharmacies] = useState([]);
+    const [pharmacies, setPharmacies] = mypharmacies;
     const [markers, setMarkers] = useState([]);
     const [selectedPharmacy, setSelectedPharmacy] = useState({});
     const [popupVisible, setPopupVisible] = useState(false);
@@ -38,7 +38,6 @@ const MapComponent = () => {
             const response = await axios.get(`${apiUrl}/pharmacies`, {headers: authHeader()})
             console.log(response.data)
             //setPharmacies(response.data);
-            setPharmacies(mypharmacies);
             const markers = response.data.map((pharmacy) => ({
                 geocode: [pharmacy.altitude, pharmacy.longitude],
                 pharmacy: pharmacy,
