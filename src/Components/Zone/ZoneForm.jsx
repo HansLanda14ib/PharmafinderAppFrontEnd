@@ -14,7 +14,7 @@ const ZoneForm = ({onZoneAdded}) => {
     let navigate = useNavigate();
 
     useEffect(() => {
-        axios.get(`${apiUrl}/v1/cities`).then((response) => {
+        axios.get(`${apiUrl}/cities`).then((response) => {
             setCities(response.data);
         });
     }, []);
