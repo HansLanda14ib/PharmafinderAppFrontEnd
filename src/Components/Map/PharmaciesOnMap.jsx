@@ -175,7 +175,7 @@ const MapComponent = () => {
         try {
             const response = await axios.get(`${apiUrl}/pharmacies`, {headers: authHeader()})
             setPharmacies(response.data);
-            const markers = pharmacies.map((pharmacy) => ({
+            const markers = response.data.map((pharmacy) => ({
                 geocode: [pharmacy.altitude, pharmacy.longitude],
                 pharmacy: pharmacy,
             }));
