@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "cors-anywhere-production-6dbe.up.railway.apphttps://pharmafinder.up.railway.app/api/v1/auth/";
+const API_URL = "https://pharmafinder.up.railway.app/api/v1/auth/";
 
 const register = (role,
                   email,
