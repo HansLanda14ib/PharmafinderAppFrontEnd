@@ -18,7 +18,7 @@ import authHeader from "../../Services/auth-header";
 import AuthService from "../../Services/auth.service";
 import './cursor.css';
 import apiUrl from "../../config";
- const mypharmacies=[
+const mypharmacies=[
      {
          "id": 1,
          "name": "manar pharmacy",
@@ -406,7 +406,7 @@ export default function ListPharmacies() {
                 <tbody>
                 {searchInput.length > 1
                     ? filteredResults.map((pharmacy) => renderPharmacy(pharmacy))
-                    : mypharmacies.map((pharmacy) => renderPharmacy(pharmacy))}
+                    : pharmacies.map((pharmacy) => renderPharmacy(pharmacy))}
                 </tbody>
             </table>
             <Modal show={mapModalIsOpen} onHide={() => {

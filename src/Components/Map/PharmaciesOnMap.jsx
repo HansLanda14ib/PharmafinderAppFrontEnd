@@ -173,10 +173,9 @@ const MapComponent = () => {
     }, []);
     const fetchPharmacies = useCallback(async () => {
         try {
-           // const response = await axios.get(`${apiUrl}/pharmacies`, {headers: authHeader()})
-            //setPharmacies(response.data);
-            setPharmacies(mypharmacies);
-            const markers = mypharmacies.map((pharmacy) => ({
+            const response = await axios.get(`${apiUrl}/pharmacies`, {headers: authHeader()})
+            setPharmacies(response.data);
+            const markers = pharmacies.map((pharmacy) => ({
                 geocode: [pharmacy.altitude, pharmacy.longitude],
                 pharmacy: pharmacy,
             }));
